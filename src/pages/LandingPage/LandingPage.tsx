@@ -9,18 +9,11 @@ const LandingPage: React.FC = () => {
       <div className="layout-container flex h-full grow flex-col">
         <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#eaedf1] px-10 py-3">
           <div className="flex items-center gap-4 text-[#101418]">
-            <div className="size-4">
-              <svg
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"
-                  fill="currentColor"
-                ></path>
-              </svg>
-            </div>
+            <img
+              src="/LocaMaisLogoIcone.png"
+              alt="LocaMais Logo"
+              className="w-12 h-12"
+            />
             <h2 className="text-[#101418] text-lg font-bold leading-tight tracking-[-0.015em]">
               LocaMais
             </h2>
@@ -54,10 +47,14 @@ const LandingPage: React.FC = () => {
             </div>
             <div className="flex gap-2">
               <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#b2cbe5] text-[#101418] text-sm font-bold leading-normal tracking-[0.015em]">
-                <span className="truncate">Cadastrar</span>
+                <a href="/auth/sign-up" className="truncate">
+                  Cadastrar
+                </a>
               </button>
               <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#eaedf1] text-[#101418] text-sm font-bold leading-normal tracking-[0.015em]">
-                <span className="truncate">Entrar</span>
+                <a href="/auth/sign-in" className="truncate">
+                  Entrar
+                </a>
               </button>
             </div>
           </div>
@@ -69,7 +66,8 @@ const LandingPage: React.FC = () => {
                 <div
                   className="flex min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-xl items-center justify-center p-4"
                   style={{
-                    backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCI-Cb1hsx85KKqavsuCo4aHwb9YZEsLFH08w46t8qOX_SKyNWUhvign_yu1Lt5DWmGaoCWghGTP9oCzjtlWD2rMpmsuiCgZfIaplkRcGgQVYBt1bberf-VVUvFKVY-6aPuWyPhWNXWS6nWnWjdes4fj5P431rHU5pWyIvvvSCMFR7wUuEya7oYaLsKrthjt-uF_1U_4Qwo6ab1H56mO6FQAYtnEFL4qI1f-vAzEanK4yXfrbbl1o3IlJxmloptIvYBPlI5llMwMw")'
+                    backgroundImage:
+                      'linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCI-Cb1hsx85KKqavsuCo4aHwb9YZEsLFH08w46t8qOX_SKyNWUhvign_yu1Lt5DWmGaoCWghGTP9oCzjtlWD2rMpmsuiCgZfIaplkRcGgQVYBt1bberf-VVUvFKVY-6aPuWyPhWNXWS6nWnWjdes4fj5P431rHU5pWyIvvvSCMFR7wUuEya7oYaLsKrthjt-uF_1U_4Qwo6ab1H56mO6FQAYtnEFL4qI1f-vAzEanK4yXfrbbl1o3IlJxmloptIvYBPlI5llMwMw")',
                   }}
                 >
                   <div className="flex flex-col gap-2 text-center">
@@ -77,8 +75,9 @@ const LandingPage: React.FC = () => {
                       Aluguel Direto, Simplificado
                     </h1>
                     <h2 className="text-white text-sm font-normal leading-normal @[480px]:text-base @[480px]:font-normal @[480px]:leading-normal">
-                      Conecte-se diretamente com proprietários e inquilinos. Gerencie
-                      anúncios, contratos, pagamentos e manutenção sem esforço.
+                      Conecte-se diretamente com proprietários e inquilinos.
+                      Gerencie anúncios, contratos, pagamentos e manutenção sem
+                      esforço.
                     </h2>
                   </div>
                   <div className="flex-wrap gap-3 flex justify-center">
@@ -125,7 +124,8 @@ const LandingPage: React.FC = () => {
                       Anúncios de Propriedades
                     </h2>
                     <p className="text-[#5c728a] text-sm font-normal leading-normal">
-                      Crie e gerencie anúncios detalhados de propriedades com facilidade.
+                      Crie e gerencie anúncios detalhados de propriedades com
+                      facilidade.
                     </p>
                   </div>
                 </div>
@@ -178,8 +178,8 @@ const LandingPage: React.FC = () => {
                       Controle de Pagamentos
                     </h2>
                     <p className="text-[#5c728a] text-sm font-normal leading-normal">
-                      Acompanhe pagamentos, envie lembretes e gerencie transações
-                      financeiras.
+                      Acompanhe pagamentos, envie lembretes e gerencie
+                      transações financeiras.
                     </p>
                   </div>
                 </div>
@@ -205,8 +205,8 @@ const LandingPage: React.FC = () => {
                       Agendamento de Manutenção
                     </h2>
                     <p className="text-[#5c728a] text-sm font-normal leading-normal">
-                      Agende e gerencie solicitações de manutenção e reparos
-                      com eficiência.
+                      Agende e gerencie solicitações de manutenção e reparos com
+                      eficiência.
                     </p>
                   </div>
                 </div>
@@ -227,7 +227,8 @@ const LandingPage: React.FC = () => {
                   <div
                     className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
                     style={{
-                      backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCu4wdtB1rsvap0dLVnvw5WoLWTD-ROno53iswlNFe75je6kVBnNisAxvd7y6tarXXlXMWtoA4oSxkix9rERVXU2g7kXXfqZAACnmVDpkFCADVUxM_Ftzczg-PhsR-AtlktvnSviq8b4kHtZxtemBwXa72oXI9qtXhEc8D3c_Ld8zjlLQfEJJuspariZqbzv7OM9jKz56HjGpXGGBNcBd-CpNU8ZADO99q2Q_v8vGUdwv_17vrzTM0moxprfSM-hNQ-MxSo2vVdnw")'
+                      backgroundImage:
+                        'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCu4wdtB1rsvap0dLVnvw5WoLWTD-ROno53iswlNFe75je6kVBnNisAxvd7y6tarXXlXMWtoA4oSxkix9rERVXU2g7kXXfqZAACnmVDpkFCADVUxM_Ftzczg-PhsR-AtlktvnSviq8b4kHtZxtemBwXa72oXI9qtXhEc8D3c_Ld8zjlLQfEJJuspariZqbzv7OM9jKz56HjGpXGGBNcBd-CpNU8ZADO99q2Q_v8vGUdwv_17vrzTM0moxprfSM-hNQ-MxSo2vVdnw")',
                     }}
                   ></div>
                   <div>
@@ -235,8 +236,8 @@ const LandingPage: React.FC = () => {
                       Comunicação Direta
                     </p>
                     <p className="text-[#5c728a] text-sm font-normal leading-normal">
-                      Comunique-se diretamente com inquilinos ou proprietários através do
-                      sistema de mensagens do aplicativo.
+                      Comunique-se diretamente com inquilinos ou proprietários
+                      através do sistema de mensagens do aplicativo.
                     </p>
                   </div>
                 </div>
@@ -244,7 +245,8 @@ const LandingPage: React.FC = () => {
                   <div
                     className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
                     style={{
-                      backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCBN4sj70s_aomDEQUmFiD95k82L9lwW2qVzjkGTwCWS2ZspF3PIF57TPm3w5-HJUccupv0IkU9pjRgn3TH0NNIZ-KWPuFUeI8C1Fd9Bo7SknU8PHJqdF6G83-XSBPaS6PJzdufj05H7A-ombUZSWa0JZrgt2NFV4Y-Dp5sXP2K0o512x3OjZKXgJq0BEeuqMxk7kWnw6HlgBG2Mibetr4WtNrgJSnR5vt9MRmkXoT0ALKjUGYLoJurzOyw8yiu4Kgn-qYSOEpO7w")'
+                      backgroundImage:
+                        'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCBN4sj70s_aomDEQUmFiD95k82L9lwW2qVzjkGTwCWS2ZspF3PIF57TPm3w5-HJUccupv0IkU9pjRgn3TH0NNIZ-KWPuFUeI8C1Fd9Bo7SknU8PHJqdF6G83-XSBPaS6PJzdufj05H7A-ombUZSWa0JZrgt2NFV4Y-Dp5sXP2K0o512x3OjZKXgJq0BEeuqMxk7kWnw6HlgBG2Mibetr4WtNrgJSnR5vt9MRmkXoT0ALKjUGYLoJurzOyw8yiu4Kgn-qYSOEpO7w")',
                     }}
                   ></div>
                   <div>
@@ -252,8 +254,8 @@ const LandingPage: React.FC = () => {
                       Relatórios Financeiros
                     </p>
                     <p className="text-[#5c728a] text-sm font-normal leading-normal">
-                      Gere relatórios financeiros detalhados para receitas, despesas
-                      e desempenho geral.
+                      Gere relatórios financeiros detalhados para receitas,
+                      despesas e desempenho geral.
                     </p>
                   </div>
                 </div>
@@ -261,7 +263,8 @@ const LandingPage: React.FC = () => {
                   <div
                     className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
                     style={{
-                      backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDtdZMd6Y1uX51WUh3y0Ak-rkowsAjvbbXl2JUwvmHIS3qm0GMOvLsP1Tb0aF9bD35v4qXcCFFP3yThAfjUsnJDLh04dPgE5D9vSBU5R3DJ0fYJ9UlIGvgLr-WPzdoD7iMZePjZfZhOK5xoSbn0DqN4aDtC4mX1ldRPr9yMB2SxmwurVDfwT5F9aA6Pd3RmBE6laJKuU0-JrEeZltuPTyO6uR_wYryejn_nu9YeLmfyS2zx_5QSnaxluqNCLYxQK7elQLc5XOYXqA")'
+                      backgroundImage:
+                        'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDtdZMd6Y1uX51WUh3y0Ak-rkowsAjvbbXl2JUwvmHIS3qm0GMOvLsP1Tb0aF9bD35v4qXcCFFP3yThAfjUsnJDLh04dPgE5D9vSBU5R3DJ0fYJ9UlIGvgLr-WPzdoD7iMZePjZfZhOK5xoSbn0DqN4aDtC4mX1ldRPr9yMB2SxmwurVDfwT5F9aA6Pd3RmBE6laJKuU0-JrEeZltuPTyO6uR_wYryejn_nu9YeLmfyS2zx_5QSnaxluqNCLYxQK7elQLc5XOYXqA")',
                     }}
                   ></div>
                   <div>
@@ -278,7 +281,8 @@ const LandingPage: React.FC = () => {
                   <div
                     className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
                     style={{
-                      backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBw0wecZ7GvyjBxWwes6KbmJdkWRIJxDYuUXPBa8UEyjR2cFHsv2aFmpNX1HSmJQ6hYI-X-fs9kNftBWvg4Cp5vLuIen0-PmAlfFKwTljdKFAO3Xux3i_eUBV2dVMbuoOuapFRMd9Xrt2yP6amGEuMsDe9bGL2FtMBoqHK5xeQVcmDKs7emXssUQI1EaaWy5NYOmLjgoQCAuSiWxTaHytI9IikYHasKV8aqODa2ks5aku5TR0Mo3WbVkBnzQHv6av4ErkaNMnl4lQ")'
+                      backgroundImage:
+                        'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBw0wecZ7GvyjBxWwes6KbmJdkWRIJxDYuUXPBa8UEyjR2cFHsv2aFmpNX1HSmJQ6hYI-X-fs9kNftBWvg4Cp5vLuIen0-PmAlfFKwTljdKFAO3Xux3i_eUBV2dVMbuoOuapFRMd9Xrt2yP6amGEuMsDe9bGL2FtMBoqHK5xeQVcmDKs7emXssUQI1EaaWy5NYOmLjgoQCAuSiWxTaHytI9IikYHasKV8aqODa2ks5aku5TR0Mo3WbVkBnzQHv6av4ErkaNMnl4lQ")',
                     }}
                   ></div>
                   <div>
@@ -296,8 +300,10 @@ const LandingPage: React.FC = () => {
             <div className="@container">
               <div className="flex flex-col justify-end gap-6 px-4 py-10 @[480px]:gap-8 @[480px]:px-10 @[480px]:py-20">
                 <div className="flex flex-col gap-2 items-center text-center">
-                  <h1 className="text-[#101418] tracking-light text-[32px] font-bold leading-tight 
-                  @[480px]:text-4xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em] max-w-[720px]">
+                  <h1
+                    className="text-[#101418] tracking-light text-[32px] font-bold leading-tight 
+                  @[480px]:text-4xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em] max-w-[720px]"
+                  >
                     Pronto para Simplificar seus Aluguéis?
                   </h1>
                   <p className="text-[#101418] text-base font-normal leading-normal max-w-[720px">
