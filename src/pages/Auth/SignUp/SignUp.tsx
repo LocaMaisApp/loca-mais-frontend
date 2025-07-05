@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import api from "../../../api/axiosConfig";
-import { useUser } from "../../../context/UserContext";
+import { useAuth } from "../../../context/AuthContext";
 
 // Schema de validação com Zod
 const signUpSchema = z.object({
@@ -33,7 +33,7 @@ const signUpSchema = z.object({
       /^\(\d{2}\)\s\d{4,5}-\d{4}$|^\d{10,11}$/,
       "Telefone deve estar no formato (XX) XXXXX-XXXX"
     ),
-  userType: z.enum(["landlord", "tenant"], {
+  userType: z.enum(["LANDLORD", "TENANT"], {
     required_error: "Selecione o tipo de usuário",
     invalid_type_error: "Tipo de usuário inválido",
   }),
@@ -60,7 +60,7 @@ const formatPhone = (value: string) => {
 };
 
 const SignUp: React.FC = () => {
-  const { setUser } = useUser();
+  const { setUser } = useAuth();
   const navigate=useNavigate();
 
   const {
@@ -80,7 +80,7 @@ const SignUp: React.FC = () => {
   });
 
   const onSubmit = async (data: SignUpFormData) => {
-    if (data.userType !== "landlord" && data.userType !== "tenant") {
+    if (data.userType !== "LANDLORD" && data.userType !== "TENANT") {
       throw new Error("Tipo de usuário inválido");
     }
 
@@ -90,10 +90,11 @@ const SignUp: React.FC = () => {
       lastName: fullName.split(" ").slice(1).join(" "),
       cpf: cpf.replace(/\D/g, ""),
       phone: phoneNumber.replace(/\D/g, ""),
+      type: userType,
       ...formData,
     };
     try {
-      const response = await api.post(`/api/${userType}`, {
+      const response = await api.post(`/auth/signup`, {
         ...formattedData,
       });
       const data = response.data;
@@ -101,7 +102,7 @@ const SignUp: React.FC = () => {
       navigate("/");
       
     } catch {
-      alert("Erro ao realizar cadastro. Tente novamente.");
+      console.error("Erro ao criar conta:");
     }
   };
 
@@ -239,7 +240,7 @@ const SignUp: React.FC = () => {
                     Sou proprietário
                     <input
                       type="radio"
-                      value="landlord"
+                      value="LANDLORD"
                       {...register("userType")}
                       className="invisible absolute"
                     />
@@ -248,7 +249,7 @@ const SignUp: React.FC = () => {
                     Sou locatário
                     <input
                       type="radio"
-                      value="tenant"
+                      value="TENANT"
                       {...register("userType")}
                       className="invisible absolute"
                     />

@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useUser } from "../../context/UserContext";
+import { useAuth } from "../../context/AuthContext";
 
 const Home: React.FC = () => {
-  const { user } = useUser();
+  const { user } = useAuth();
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
       <h1>Página Inicial</h1>
