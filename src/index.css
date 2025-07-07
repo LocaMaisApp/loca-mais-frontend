@@ -1,1 +1,34 @@
 @import "tailwindcss";
+@plugin "daisyui";
+
+
+@theme {
+  --font-jakarta: "Plus Jakarta Sans", "Noto Sans", sans-serif;
+  
+  --color-primary-50: #f7f9fc;
+  --color-primary-100: #eef4f9;
+  --color-primary-200: #b2cbe5; 
+  --color-primary-300: #9bb8d3; 
+  --color-primary-400: #84a5c1;
+  --color-primary-500: #6d92af;
+  --color-primary-600: #567f9d;
+  --color-primary-700: #3f6c8b;
+  --color-primary-800: #285979;
+  --color-primary-900: #114667;
+  
+  --color-neutral-50: #fcfcfd;
+  --color-neutral-100: #eaedf1; 
+  --color-neutral-200: #d4dbe2;
+  --color-neutral-300: #b4c1cd;
+  --color-neutral-400: #8a9cae;
+  --color-neutral-500: #5c728a; 
+  --color-neutral-600: #4a5e73;
+  --color-neutral-700: #384a5c;
+  --color-neutral-800: #263645;
+  --color-neutral-900: #101418; 
+  
+  
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
+  --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
+}

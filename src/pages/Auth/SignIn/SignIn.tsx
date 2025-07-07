@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import api from "../../../api/axiosConfig";
 import { useAuth, type User } from "../../../context/AuthContext";
+import { handleApiError } from "../../../utils/errorHandler";
 
 // Schema de validação com Zod para login
 const signInSchema = z.object({
@@ -20,6 +21,7 @@ type SignInFormData = z.infer<typeof signInSchema>;
 const SignIn: React.FC = () => {
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  const [error, setError] = React.useState<string | null>(null);
 
   const {
     register,
@@ -35,13 +37,15 @@ const SignIn: React.FC = () => {
   });
 
   const onSubmit = async (data: SignInFormData) => {
+    setError(null); 
     try {
       const response = await api.post("/auth/signIn", data);
       const responseData = response.data as { accessToken: string; user: User };
       signIn(responseData.user, responseData.accessToken);
       navigate("/");
-    } catch (error) {
-      console.error("Erro no login:", error);
+    } catch (error: unknown) {
+      const errorMessage = handleApiError(error, "Erro ao fazer login");
+      setError(errorMessage);
     }
   };
 
@@ -110,6 +114,7 @@ const SignIn: React.FC = () => {
                   )}
                 </label>
               </div>
+              {error && <p className="text-sm font-medium text-red-500">{error}</p>}
 
               <div className="flex flex-col items-center gap-4 px-4 py-1">
                 <button
@@ -127,7 +132,7 @@ const SignIn: React.FC = () => {
                     Não tem uma conta?{" "}
                     <Link
                       to="/auth/sign-up"
-                      className="text-[#b2cbe5] hover:text-[#9bb8d3] font-medium underline"
+                      className="text-[#7b9cbd] hover:text-[#9bb8d3] font-medium underline"
                     >
                       Cadastre-se aqui
                     </Link>
