@@ -12,13 +12,13 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   active: boolean;
-  type: "landlord" | "tenant";
+  type: "LANDLORD" | "TENANT";
 }
 
 interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
-  userType: "landlord" | "tenant" | null;
+  userType: "LANDLORD" | "TENANT" | null;
   signIn: (userData: User, accessToken: string) => void;
   signOut: () => void;
 }

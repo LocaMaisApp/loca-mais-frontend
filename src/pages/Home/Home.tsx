@@ -3,7 +3,6 @@ import { BiSearch } from "react-icons/bi";
 import { CiMapPin } from "react-icons/ci";
 import Navbar from "../../components/Navbar";
 import { PropertyCard } from "../../components/PropertyCard";
-import { useAuth } from "../../context/AuthContext";
 
 const featuredProperties = [
   {
@@ -107,7 +106,6 @@ const featuredProperties = [
 const Home: React.FC = () => {
   const featuredProps = featuredProperties.filter((p) => p.isFeatured);
   const regularProps = featuredProperties.filter((p) => !p.isFeatured);
-  const { user } = useAuth();
   const [searched, setSearched] = React.useState<string>("");
   return (
     <>
