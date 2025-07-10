@@ -4,7 +4,8 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import api from "../../../api/axiosConfig";
-import { useAuth, type User } from "../../../context/AuthContext";
+import type { User } from "../../../context/AuthContext";
+import { useAuth } from "../../../hooks/useAuth";
 import { handleApiError } from "../../../utils/errorHandler";
 
 // Schema de validação com Zod para login

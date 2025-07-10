@@ -23,6 +23,20 @@ api.interceptors.request.use(
   }
 );
 
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401 || error.response.status === 403) {
+      Cookies.remove("token");
+      window.location.href = "/auth/sign-in";
+    }
+    return Promise.reject(error);
+  }
+)
+
+
 
 
 

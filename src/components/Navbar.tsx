@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BiChevronDown, BiCog, BiLogOut, BiUser } from "react-icons/bi";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
