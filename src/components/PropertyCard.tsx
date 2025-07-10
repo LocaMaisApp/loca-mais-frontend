@@ -1,5 +1,6 @@
-import { FaHeart, FaMapMarkerAlt } from "react-icons/fa";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import { MdBathtub, MdBed, MdSquareFoot } from "react-icons/md";
+import { Link } from "react-router-dom";
 import type { Advertisement } from "../pages/Home/Home";
 
 interface PropertyCardProps {
@@ -10,7 +11,8 @@ export const PropertyCard = ({ advertisement }: PropertyCardProps) => {
   const prop = advertisement;
 
   return (
-    <div
+    <Link
+    to={`/anuncios/${prop.id}`}
       className={`card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1`}
     >
       <figure className="relative">
@@ -19,9 +21,6 @@ export const PropertyCard = ({ advertisement }: PropertyCardProps) => {
           alt="Imagem do imóvel"
           className={`w-full object-cover h-48`}
         />
-        <button className="btn btn-circle btn-sm absolute top-3 right-3 bg-white/80 backdrop-blur-sm border-none hover:bg-white/90">
-          <FaHeart className="w-4 h-4" />
-        </button>
       </figure>
 
       <div className="card-body p-4">
@@ -67,6 +66,6 @@ export const PropertyCard = ({ advertisement }: PropertyCardProps) => {
           </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };

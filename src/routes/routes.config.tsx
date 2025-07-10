@@ -2,8 +2,10 @@ import type { RouteObject } from 'react-router-dom';
 import Advertisement from '../pages/Advertisement/Advertisement';
 import SignIn from '../pages/Auth/SignIn/SignIn';
 import SignUp from '../pages/Auth/SignUp/SignUp';
+import CreateAdvertisement from '../pages/CreateAdvertisement/CreateAdvertisement';
 import Home from '../pages/Home/Home';
 import LandingPage from '../pages/LandingPage/LandingPage';
+import Search from '../pages/Search/Search';
 
 export const routes: RouteObject[] = [
   {
@@ -24,6 +26,14 @@ export const routes: RouteObject[] = [
   },
   {
     path:"/anunciar",
+    element:<CreateAdvertisement/>
+  },
+  {
+    path:"/search",
+    element:<Search/>
+  },
+  {
+    path:"/anuncios/:id",
     element:<Advertisement/>
   }
 ];

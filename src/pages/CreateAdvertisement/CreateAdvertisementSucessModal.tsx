@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const AdvertisementSuccessModal = React.forwardRef<HTMLDialogElement>((_, ref) => {
+const CreateAdvertisementSuccessModal = React.forwardRef<HTMLDialogElement>((_, ref) => {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
@@ -84,6 +84,5 @@ const AdvertisementSuccessModal = React.forwardRef<HTMLDialogElement>((_, ref) =
   );
 });
 
-AdvertisementSuccessModal.displayName = "AdvertisementSuccessModal";
 
-export default AdvertisementSuccessModal;
+export default CreateAdvertisementSuccessModal;

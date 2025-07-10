@@ -1,793 +1,270 @@
-import { useEffect, useRef, useState } from "react";
-import { BiUpload } from "react-icons/bi";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { FaArrowLeft, FaCar, FaMapMarkerAlt } from "react-icons/fa";
+import { GrDocumentText } from "react-icons/gr";
+import { MdBathtub, MdBed, MdSquareFoot } from "react-icons/md";
+import { Link, useParams } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import Navbar from "../../components/Navbar";
-import { useAuth } from "../../hooks/useAuth";
-import { handleApiError } from "../../utils/errorHandler";
-import AdvertisementErrorModal from "./AdvertisementErrorModal";
-import AdvertisementSuccessModal from "./AdvertisementSucessModal";
+import type { Advertisement as AdvertisementType } from "../Home/Home";
 
-interface Property {
-  id: number;
-  name: string;
-  street: string;
-  city: string;
-  state: string;
-  complement?: string;
-  number: number;
-  size: number;
-  bathroomQuantity: number;
-  suites: number;
-  car_space: number;
-  roomQuantity: number;
-}
-
-const Advertisement = () => {
-  const { user } = useAuth();
-  const [images, setImages] = useState<File[]>([]);
-  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
-  const [useExistingProperty, setUseExistingProperty] = useState(false);
-  const [selectedPropertyId, setSelectedPropertyId] = useState("");
-  const [existingProperties, setExistingProperties] = useState<Property[]>([]);
+const Advertisement: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const [advertisement, setAdvertisement] = useState<AdvertisementType | null>(
+    null
+  );
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const errorRef = useRef<HTMLDialogElement>(null);
-  const successRef= useRef<HTMLDialogElement>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchLandlordProperties = async () => {
+    const fetchAdvertisement = async () => {
+      if (!id) return;
+
       try {
-        const response = await api.get(`/api/landlords/${user?.id}/properties`); // Substitua 1 pelo ID do proprietário real
-        setExistingProperties(response.data);
+        setLoading(true);
+        const response = await api.get(`/api/advertisement/${id}`);
+        setAdvertisement(response.data);
       } catch (error) {
-        console.error("Erro ao carregar propriedades do proprietário:", error);
+        console.error("Erro ao buscar anúncio:", error);
+        setError("Anúncio não encontrado");
+      } finally {
+        setLoading(false);
       }
     };
-    if (user) fetchLandlordProperties();
-  }, [user]);
 
-  const [propertyData, setPropertyData] = useState({
-    name: "",
-    street: "",
-    city: "",
-    state: "",
-    complement: "",
-    number: "",
-    size: "",
-    bathroomQuantity: "",
-    suites: "",
-    car_space: "",
-    roomQuantity: "",
-  });
+    fetchAdvertisement();
+  }, [id]);
 
-  const [advertisementData, setAdvertisementData] = useState({
-    condominiumValue: "",
-    iptuValue: "",
-    rentValue: "",
-    description: "",
-  });
-
-  const isPropertyDataComplete = () => {
+  if (loading) {
     return (
-      propertyData.name &&
-      propertyData.street &&
-      propertyData.city &&
-      propertyData.state &&
-      propertyData.number &&
-      propertyData.size &&
-      propertyData.bathroomQuantity &&
-      propertyData.suites &&
-      propertyData.car_space &&
-      propertyData.roomQuantity
+      <>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      </>
     );
-  };
+  }
 
-  const isAdvertisementDataComplete = () => {
-    return advertisementData.description && advertisementData.rentValue;
-  };
+  if (error || !advertisement) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen flex flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">
+            Anúncio não encontrado
+          </h1>
+          <Link
+            to={"/"}
+            className="btn bg-primary-500 text-white hover:bg-primary-600"
+          >
+            Voltar para a Home
+          </Link>
+        </div>
+      </>
+    );
+  }
 
-  const [loading, setLoading] = useState(false);
-
-  const handlePropertyChange = (field: string, value: string) => {
-    setPropertyData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleAdvertisementChange = (field: string, value: string) => {
-    setAdvertisementData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-
-    // Adicionar os arquivos ao estado
-    setImages((prev) => [...prev, ...files]);
-
-    // Criar URLs de preview para exibição
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImagePreviewUrls((prev) => [
-          ...prev,
-          event.target?.result as string,
-        ]);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviewUrls((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user || !user.id) {
-      navigate("/auth/sign-in");
-      return;
-    }
-    const landlordId = user.id;
-    if (!isPropertyDataComplete() && !useExistingProperty) {
-      alert("Por favor, preencha todos os campos obrigatórios da propriedade.");
-      return;
-    }
-
-    if (!isAdvertisementDataComplete()) {
-      alert("Por favor, preencha todos os campos obrigatórios do anúncio.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      let propertyId;
-
-      if (useExistingProperty) {
-        propertyId = parseInt(selectedPropertyId);
-      } else {
-        const propertyFormData = new FormData();
-        propertyFormData.append("name", propertyData.name);
-        propertyFormData.append("street", propertyData.street);
-        propertyFormData.append("city", propertyData.city);
-        propertyFormData.append("state", propertyData.state);
-        if (propertyData.complement) {
-          propertyFormData.append("complement", propertyData.complement);
-        }
-        propertyFormData.append("number", propertyData.number);
-        propertyFormData.append("size", propertyData.size);
-        propertyFormData.append(
-          "bathroomQuantity",
-          propertyData.bathroomQuantity
-        );
-        propertyFormData.append("suites", propertyData.suites);
-        propertyFormData.append("car_space", propertyData.car_space);
-        propertyFormData.append("roomQuantity", propertyData.roomQuantity);
-        propertyFormData.append("landlord_id", landlordId.toString());
-
-        // Chamada para a API para criar a propriedade
-        const propertyResponse = await api.post(
-          "/api/property",
-          propertyFormData,
-          {
-            headers: {
-              "Content-Type": "application/json", // minúsculo
-            },
-          }
-        );
-        propertyId = propertyResponse.data.id;
-      }
-
-      // Criar o anúncio com FormData
-      const advertisementFormData = new FormData();
-      advertisementFormData.append(
-        "description",
-        advertisementData.description
-      );
-      advertisementFormData.append(
-        "condominiumValue",
-        advertisementData.condominiumValue || "0"
-      );
-      advertisementFormData.append(
-        "iptuValue",
-        advertisementData.iptuValue || "0"
-      );
-      advertisementFormData.append("value", advertisementData.rentValue);
-      advertisementFormData.append("propertyId", propertyId.toString());
-
-      images.forEach((image) => {
-        advertisementFormData.append(`images`, image);
-      });
-      console.log("called")
-
-      await api.post("/api/advertisement", advertisementFormData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      setImages([]);
-      setImagePreviewUrls([]);
-      setPropertyData({
-        name: "",
-        street: "",
-        city: "",
-        state: "",
-        complement: "",
-        number: "",
-        size: "",
-        bathroomQuantity: "",
-        suites: "",
-        car_space: "",
-        roomQuantity: "",
-      });
-      setAdvertisementData({
-        condominiumValue: "",
-        iptuValue: "",
-        rentValue: "",
-        description: "",
-      });
-      successRef.current?.showModal();
-    } catch (error) {
-      setError(handleApiError(error, "Erro ao criar anúncio"));
-      errorRef.current?.showModal();
-    } finally {
-      setLoading(false);
-    }
-  };
+  const totalValue =
+    advertisement.value +
+    advertisement.condominiumValue +
+    advertisement.iptuValue;
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-        <Navbar />
-        <main className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-8 text-center">
-              <h1 className="text-4xl font-bold mb-3">
-                Cadastrar Propriedade e Anúncio
-              </h1>
-              <p className="text-gray-600 text-lg">
-                Primeiro cadastre a propriedade e depois crie o anúncio
-              </p>
-            </div>
+      <Navbar />
+      <main className="min-h-screen bg-gray-50">
+        {/* Header com botão voltar */}
+        <div className="bg-white shadow-sm ">
+          <div className="container mx-auto px-4 py-4 ">
+            <Link
+              to={"/"}
+              className="flex items-center text-primary-600 cursor-pointer hover:text-primary-700 transition-colors"
+            >
+              <FaArrowLeft className="mr-2" />
+              Voltar
+            </Link>
+          </div>
+        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Escolha do Tipo de Propriedade */}
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                <div className="mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-indigo-500 pb-2">
-                    Escolha uma Opção
-                  </h2>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="propertyChoice"
-                        value="new"
-                        checked={!useExistingProperty}
-                        onChange={() => setUseExistingProperty(false)}
-                        className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span className="text-sm font-medium text-gray-700">
-                        Criar Nova Propriedade
-                      </span>
-                    </label>
-
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="propertyChoice"
-                        value="existing"
-                        checked={useExistingProperty}
-                        onChange={() => setUseExistingProperty(true)}
-                        className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                      />
-                      <span className="text-sm font-medium text-gray-700">
-                        Selecionar Propriedade Existente
-                      </span>
-                    </label>
-                  </div>
-
-                  {useExistingProperty && (
-                    <div className="mt-4">
-                      <label
-                        htmlFor="existingProperty"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Selecione uma Propriedade *
-                      </label>
-                      <select
-                        id="existingProperty"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                        value={selectedPropertyId}
-                        onChange={(e) => setSelectedPropertyId(e.target.value)}
-                        required={useExistingProperty}
-                      >
-                        <option value="">Selecione uma propriedade</option>
-                        {existingProperties.map((property) => (
-                          <option key={property.id} value={property.id}>
-                            {property.name} - {property.street},{" "}
-                            {property.number} - {property.city}/{property.state}
-                          </option>
-                        ))}
-                      </select>
-
-                      {selectedPropertyId && (
-                        <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                          {(() => {
-                            const selected = existingProperties.find(
-                              (p) => p.id === parseInt(selectedPropertyId)
-                            );
-                            return selected ? (
-                              <div className="text-sm text-gray-600">
-                                <p>
-                                  <strong>Propriedade:</strong> {selected.name}
-                                </p>
-                                <p>
-                                  <strong>Endereço:</strong> {selected.street},{" "}
-                                  {selected.number} - {selected.city}/
-                                  {selected.state}
-                                </p>
-                                <p>
-                                  <strong>Tamanho:</strong> {selected.size}m² |{" "}
-                                  <strong>Quartos:</strong>{" "}
-                                  {selected.roomQuantity} |{" "}
-                                  <strong>Banheiros:</strong>{" "}
-                                  {selected.bathroomQuantity}
-                                </p>
-                              </div>
-                            ) : null;
-                          })()}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Informações da Propriedade */}
-              {!useExistingProperty && (
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                  <div className="mb-6">
-                    <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-blue-500 pb-2">
-                      Informações da Propriedade
-                    </h2>
-                  </div>
-                  <div className="space-y-6">
-                    <div>
-                      <label
-                        htmlFor="name"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Nome da Propriedade *
-                      </label>
-                      <input
-                        id="name"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Ex: Apartamento Residencial Central"
-                        value={propertyData.name}
-                        onChange={(e) =>
-                          handlePropertyChange("name", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label
-                          htmlFor="street"
-                          className="block text-sm font-medium text-gray-700 mb-2"
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+                <div className="relative h-96">
+                  {advertisement.images && advertisement.images.length > 0 ? (
+                    <div className="carousel w-full h-96">
+                      {advertisement.images.map((image, index) => (
+                        <div
+                          key={image}
+                          id={"slide" + index}
+                          className="carousel-item relative w-full h-96"
                         >
-                          Rua *
-                        </label>
-                        <input
-                          id="street"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                          placeholder="Rua das Flores"
-                          value={propertyData.street}
-                          onChange={(e) =>
-                            handlePropertyChange("street", e.target.value)
-                          }
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="number"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Número *
-                        </label>
-                        <input
-                          id="number"
-                          type="number"
-                          min="1"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                          placeholder="123"
-                          value={propertyData.number}
-                          onChange={(e) =>
-                            handlePropertyChange("number", e.target.value)
-                          }
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="complement"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Complemento
-                      </label>
-                      <input
-                        id="complement"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Apto 101, Bloco A"
-                        value={propertyData.complement}
-                        onChange={(e) =>
-                          handlePropertyChange("complement", e.target.value)
-                        }
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label
-                          htmlFor="city"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Cidade *
-                        </label>
-                        <input
-                          id="city"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                          placeholder="São Paulo"
-                          value={propertyData.city}
-                          onChange={(e) =>
-                            handlePropertyChange("city", e.target.value)
-                          }
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="state"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Estado *
-                        </label>
-                        <input
-                          id="state"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                          placeholder="SP"
-                          value={propertyData.state}
-                          onChange={(e) =>
-                            handlePropertyChange("state", e.target.value)
-                          }
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Características da Propriedade */}
-              {!useExistingProperty && (
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                  <div className="mb-6">
-                    <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-purple-500 pb-2">
-                      Características da Propriedade
-                    </h2>
-                  </div>
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <div>
-                        <label
-                          htmlFor="size"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Tamanho (m²) *
-                        </label>
-                        <input
-                          id="size"
-                          type="number"
-                          min="1"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                          placeholder="75"
-                          value={propertyData.size}
-                          onChange={(e) =>
-                            handlePropertyChange("size", e.target.value)
-                          }
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="roomQuantity"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Quantidade de Quartos *
-                        </label>
-                        <input
-                          id="roomQuantity"
-                          type="number"
-                          min="0"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                          placeholder="2"
-                          value={propertyData.roomQuantity}
-                          onChange={(e) =>
-                            handlePropertyChange("roomQuantity", e.target.value)
-                          }
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="bathroomQuantity"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Quantidade de Banheiros *
-                        </label>
-                        <input
-                          id="bathroomQuantity"
-                          type="number"
-                          min="0"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                          placeholder="1"
-                          value={propertyData.bathroomQuantity}
-                          onChange={(e) =>
-                            handlePropertyChange(
-                              "bathroomQuantity",
-                              e.target.value
-                            )
-                          }
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="suites"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Quantidade de Suítes *
-                        </label>
-                        <input
-                          id="suites"
-                          type="number"
-                          min="0"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                          placeholder="0"
-                          value={propertyData.suites}
-                          onChange={(e) =>
-                            handlePropertyChange("suites", e.target.value)
-                          }
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="car_space"
-                          className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                          Vagas de Garagem *
-                        </label>
-                        <input
-                          id="car_space"
-                          type="number"
-                          min="0"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
-                          placeholder="1"
-                          value={propertyData.car_space}
-                          onChange={(e) =>
-                            handlePropertyChange("car_space", e.target.value)
-                          }
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Dados do Anúncio */}
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                <div className="mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-green-500 pb-2">
-                    Dados do Anúncio
-                  </h2>
-                </div>
-                <div className="space-y-6">
-                  <div>
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Descrição do Anúncio *
-                    </label>
-                    <textarea
-                      id="description"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors resize-vertical"
-                      placeholder="Descreva sua propriedade, destacando os principais atrativos..."
-                      rows={4}
-                      value={advertisementData.description}
-                      onChange={(e) =>
-                        handleAdvertisementChange("description", e.target.value)
-                      }
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label
-                        htmlFor="rentValue"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Valor do Aluguel (R$) *
-                      </label>
-                      <input
-                        id="rentValue"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                        placeholder="2200.00"
-                        value={advertisementData.rentValue}
-                        onChange={(e) =>
-                          handleAdvertisementChange("rentValue", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="condominiumValue"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Valor do Condomínio (R$)
-                      </label>
-                      <input
-                        id="condominiumValue"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                        placeholder="350.00"
-                        value={advertisementData.condominiumValue}
-                        onChange={(e) =>
-                          handleAdvertisementChange(
-                            "condominiumValue",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="iptuValue"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Valor do IPTU (R$)
-                      </label>
-                      <input
-                        id="iptuValue"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                        placeholder="150.00"
-                        value={advertisementData.iptuValue}
-                        onChange={(e) =>
-                          handleAdvertisementChange("iptuValue", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Fotos da Propriedade */}
-              <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                <div className="mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-orange-500 pb-2 flex items-center gap-2">
-                    <BiUpload className="w-6 h-6 text-orange-500" />
-                    Fotos da Propriedade
-                  </h2>
-                </div>
-                <div className="space-y-6">
-                  <div>
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      id="image-upload"
-                    />
-                    <label
-                      htmlFor="image-upload"
-                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all duration-300 hover:border-orange-400"
-                    >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <BiUpload className="w-8 h-8 mb-4 text-gray-500" />
-                        <p className="mb-2 text-sm text-gray-500">
-                          <span className="font-semibold">
-                            Clique para fazer upload
-                          </span>{" "}
-                          ou arraste as imagens
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          PNG, JPG ou JPEG (MAX. 10MB cada)
-                        </p>
-                      </div>
-                    </label>
-                  </div>
-
-                  {imagePreviewUrls.length > 0 && (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {imagePreviewUrls.map((imageUrl, index) => (
-                        <div key={index} className="relative group">
                           <img
-                            src={imageUrl}
-                            alt={`Upload ${index + 1}`}
-                            className="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm"
+                            src={import.meta.env.VITE_API_URL + image}
+                            className="w-full h-full object-contain"
                           />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
-                          >
-                            ×
-                          </button>
+                          {advertisement.images.length > 1 && (
+                            <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                              <a
+                                href={`#slide${
+                                  index === 0
+                                    ? advertisement.images.length - 1
+                                    : index - 1
+                                }`}
+                                className="btn btn-circle"
+                              >
+                                ❮
+                              </a>
+                              <a
+                                href={`#slide${
+                                  index === advertisement.images.length - 1
+                                    ? 0
+                                    : index + 1
+                                }`}
+                                className="btn btn-circle"
+                              >
+                                ❯
+                              </a>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-500">
+                        Sem imagens disponíveis
+                      </span>
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Botões de Ação */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-end pt-6">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className={`px-8 py-3 text-white rounded-lg font-medium transform transition-all duration-200 shadow-lg 
-                  hover:shadow-xl ${
-                    loading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-primary-600 hover:bg-primary-700 hover:scale-105"
-                  }`}
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Enviando...
+              {/* Informações do imóvel */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div className="mb-6">
+                  <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                    {advertisement.property.name}
+                  </h1>
+                  <div className="flex items-center text-gray-600 mb-4">
+                    <FaMapMarkerAlt className="mr-2" />
+                    <span>
+                      {advertisement.property.street},{" "}
+                      {advertisement.property.number}
+                      {advertisement.property.complement &&
+                        `, ${advertisement.property.complement}`}{" "}
+                      -{advertisement.property.city},{" "}
+                      {advertisement.property.state}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                  <div className="text-center p-4 bg-gray-50 rounded-xl">
+                    <MdBed className="w-8 h-8 mx-auto mb-2 text-primary-600" />
+                    <div className="text-2xl font-bold text-gray-800">
+                      {advertisement.property.roomQuantity}
                     </div>
-                  ) : useExistingProperty ? (
-                    "Criar Anúncio"
-                  ) : (
-                    "Cadastrar Propriedade e Anúncio"
-                  )}
-                </button>
+                    <div className="text-sm text-gray-600">Quartos</div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-xl">
+                    <MdBathtub className="w-8 h-8 mx-auto mb-2 text-primary-600" />
+                    <div className="text-2xl font-bold text-gray-800">
+                      {advertisement.property.bathroomQuantity}
+                    </div>
+                    <div className="text-sm text-gray-600">Banheiros</div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-xl">
+                    <MdSquareFoot className="w-8 h-8 mx-auto mb-2 text-primary-600" />
+                    <div className="text-2xl font-bold text-gray-800">
+                      {advertisement.property.size}
+                    </div>
+                    <div className="text-sm text-gray-600">m²</div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-xl">
+                    <FaCar className="w-8 h-8 mx-auto mb-2 text-primary-600" />
+                    <div className="text-2xl font-bold text-gray-800">
+                      {advertisement.property.car_space}
+                    </div>
+                    <div className="text-sm text-gray-600">Vagas</div>
+                  </div>
+                </div>
+
+                {/* Suítes */}
+                {advertisement.property.suites > 0 && (
+                  <div className="mb-6">
+                    <div className="flex items-center">
+                      <MdBed className="w-5 h-5 mr-2 text-primary-600" />
+                      <span className="text-gray-700">
+                        {advertisement.property.suites} suíte
+                        {advertisement.property.suites > 1 ? "s" : ""}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Descrição
+                  </h3>
+                  <p className="text-gray-700 ">{advertisement.description}</p>
+                </div>
               </div>
-            </form>
+            </div>
+
+            {/* Sidebar - Valores e contato */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-8">
+                {/* Valores */}
+                <div className="mb-8">
+                  <div className="text-3xl font-bold text-primary-600 mb-4">
+                    R$ {advertisement.value.toLocaleString()}
+                    <span className="text-lg text-gray-600 font-normal">
+                      /mês
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Aluguel:</span>
+                      <span className="font-semibold">
+                        R$ {advertisement.value.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Condomínio:</span>
+                      <span className="font-semibold">
+                        R$ {advertisement.condominiumValue.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">IPTU:</span>
+                      <span className="font-semibold">
+                        R$ {advertisement.iptuValue.toLocaleString()}
+                      </span>
+                    </div>
+                    <hr className="my-2" />
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Total:</span>
+                      <span className="text-primary-600">
+                        R$ {totalValue.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botões de contato */}
+                <div className="space-y-3">
+                  <button className="w-full btn bg-primary-500 text-white hover:bg-primary-600 border-none">
+                    <GrDocumentText className="text-white" />
+                    Fazer proposta
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </main>
-      </div>
-      <AdvertisementErrorModal error={error} ref={errorRef} />
-      <AdvertisementSuccessModal ref={successRef} />
+        </div>
+      </main>
     </>
   );
 };

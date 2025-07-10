@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { BiSearch } from "react-icons/bi";
 import { CiMapPin } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import Navbar from "../../components/Navbar";
 import { PropertyCard } from "../../components/PropertyCard";
@@ -35,11 +36,19 @@ export interface Advertisement {
 }
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   const [advertisements, setAdvertisements] = React.useState<Advertisement[]>(
     []
   );
   const [searched, setSearched] = React.useState<string>("");
   const [loading, setLoading] = React.useState<boolean>(true);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searched.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searched.trim())}`);
+    }
+  };
 
   useEffect(() => {
     const fetchAdvertisements = async () => {
@@ -74,7 +83,7 @@ const Home: React.FC = () => {
             </div>
 
             <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-2xl p-6 shadow-2xl">
+              <form onSubmit={handleSearch} className="bg-white rounded-2xl p-6 shadow-2xl">
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1 relative">
                     <CiMapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -88,13 +97,13 @@ const Home: React.FC = () => {
                   </div>
 
                   <div className="flex gap-2">
-                    <button className="px-8 py-4 bg-primary-400 rounded-xl text-white hover:bg-primary-600 transition-colors duration-300 flex items-center">
+                    <button type="submit" className="px-8 py-4 bg-primary-400 rounded-xl text-white hover:bg-primary-600 transition-colors duration-300 flex items-center">
                       <BiSearch className="inline-block mr-2" />
                       Buscar
                     </button>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </section>

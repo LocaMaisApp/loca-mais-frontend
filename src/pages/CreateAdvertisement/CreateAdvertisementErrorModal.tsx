@@ -1,7 +1,7 @@
 import React from 'react';
 import { BiError } from 'react-icons/bi';
 
-const AdvertisementErrorModal = React.forwardRef<
+const CreateAdvertisementErrorModal = React.forwardRef<
   HTMLDialogElement,
   {
     error: string | null;
@@ -73,6 +73,5 @@ const AdvertisementErrorModal = React.forwardRef<
   );
 });
 
-AdvertisementErrorModal.displayName = 'AdvertisementErrorModal';
 
-export default AdvertisementErrorModal;
+export default CreateAdvertisementErrorModal;
