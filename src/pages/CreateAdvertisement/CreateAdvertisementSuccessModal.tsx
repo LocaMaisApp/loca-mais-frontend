@@ -13,7 +13,7 @@ const CreateAdvertisementSuccessModal = React.forwardRef<HTMLDialogElement>((_, 
 
   return (
     <dialog ref={ref} id="advertisementSuccessModal" className="modal">
-      <div className="modal-box max-w-md modal-open">
+      <div className="modal-box max-w-md ">
         <div className="flex items-center gap-3 mb-6">
           <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
             <span className="text-2xl">✓</span>
