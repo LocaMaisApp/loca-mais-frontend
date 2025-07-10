@@ -1,15 +1,13 @@
 
-export const handleApiError = (error: unknown, defaultMessage: string = "Erro inesperado"): string => {
+export const handleApiError = (error: unknown, defaultMessage: string = "Erro desconhecido"): string => {
   if (error && typeof error === 'object' && 'response' in error) {
     const apiError = error as { 
       response: { 
-        data: { message?: string; error?: string } 
+        data: { message?: string } 
       } 
     };
     
-    return apiError.response?.data?.message || 
-           apiError.response?.data?.error || 
-           defaultMessage;
+    return apiError.response?.data?.message || defaultMessage;
   }
   
   if (error instanceof Error) {

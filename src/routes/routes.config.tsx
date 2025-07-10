@@ -1,4 +1,5 @@
 import type { RouteObject } from 'react-router-dom';
+import Advertisement from '../pages/Advertisement/Advertisement';
 import SignIn from '../pages/Auth/SignIn/SignIn';
 import SignUp from '../pages/Auth/SignUp/SignUp';
 import Home from '../pages/Home/Home';
@@ -20,6 +21,10 @@ export const routes: RouteObject[] = [
   {
     path:"/auth/sign-in",
     element:<SignIn/>
+  },
+  {
+    path:"/anunciar",
+    element:<Advertisement/>
   }
 ];
 
