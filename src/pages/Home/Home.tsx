@@ -1,112 +1,62 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BiSearch } from "react-icons/bi";
 import { CiMapPin } from "react-icons/ci";
+import api from "../../api/axiosConfig";
 import Navbar from "../../components/Navbar";
 import { PropertyCard } from "../../components/PropertyCard";
 
-const featuredProperties = [
-  {
-    id: 1,
-    title: "Apartamento Moderno no Centro",
-    address: "Rua Augusta, 456 - Centro, São Paulo - SP",
-    bedrooms: 2,
-    bathrooms: 2,
-    size: 75,
-    price: 2200,
-    image: "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
-    isAvailable: true,
-    isFeatured: true,
-  },
-  {
-    id: 2,
-    title: "Cobertura com Vista Panorâmica",
-    address: "Av. Paulista, 1000 - Bela Vista, São Paulo - SP",
-    bedrooms: 3,
-    bathrooms: 3,
-    size: 120,
-    price: 4500,
-    image: "https://images.unsplash.com/photo-1483058712412-4245e9b90334",
-    isAvailable: true,
-    isFeatured: true,
-  },
-  {
-    id: 3,
-    title: "Loft Industrial Reformado",
-    address: "Rua da Consolação, 789 - Vila Buarque, São Paulo - SP",
-    bedrooms: 1,
-    bathrooms: 1,
-    size: 60,
-    price: 1800,
-    image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625",
-    isAvailable: true,
-    isFeatured: false,
-  },
-  {
-    id: 4,
-    title: "Casa com Jardim Privativo",
-    address: "Rua das Flores, 123 - Vila Madalena, São Paulo - SP",
-    bedrooms: 3,
-    bathrooms: 2,
-    size: 140,
-    price: 3200,
-    image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-    isAvailable: true,
-    isFeatured: false,
-  },
-  {
-    id: 5,
-    title: "Apartamento Familiar Completo",
-    address: "Rua Vergueiro, 890 - Liberdade, São Paulo - SP",
-    bedrooms: 3,
-    bathrooms: 2,
-    size: 95,
-    price: 2800,
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-    isAvailable: true,
-    isFeatured: false,
-  },
-  {
-    id: 6,
-    title: "Studio Compacto e Moderno",
-    address: "Rua Oscar Freire, 567 - Jardins, São Paulo - SP",
-    bedrooms: 1,
-    bathrooms: 1,
-    size: 45,
-    price: 2100,
-    image: "https://images.unsplash.com/photo-1524230572899-a752b3835840",
-    isAvailable: false,
-    isFeatured: false,
-  },
-  {
-    id: 7,
-    title: "Apartamento com Varanda Gourmet",
-    address: "Rua Estados Unidos, 234 - Jardim América, São Paulo - SP",
-    bedrooms: 2,
-    bathrooms: 2,
-    size: 85,
-    price: 3500,
-    image: "https://images.unsplash.com/photo-1721322800607-8c38375eef04",
-    isAvailable: true,
-    isFeatured: false,
-  },
-  {
-    id: 8,
-    title: "Duplex com Home Office",
-    address: "Rua Bela Cintra, 345 - Consolação, São Paulo - SP",
-    bedrooms: 2,
-    bathrooms: 3,
-    size: 110,
-    price: 3800,
-    image: "https://images.unsplash.com/photo-1483058712412-4245e9b90334",
-    isAvailable: true,
-    isFeatured: false,
-  },
-];
+export interface Property {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  active: boolean;
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  complement: string;
+  number: number;
+  size: number;
+  bathroomQuantity: number;
+  suites: number;
+  car_space: number;
+  roomQuantity: number;
+  landlord_id: number;
+}
+
+export interface Advertisement {
+  id: number;
+  description: string;
+  condominiumValue: number;
+  value: number;
+  iptuValue: number;
+  property: Property;
+  images: string[];
+}
 
 const Home: React.FC = () => {
-  const featuredProps = featuredProperties.filter((p) => p.isFeatured);
-  const regularProps = featuredProperties.filter((p) => !p.isFeatured);
+  const [advertisements, setAdvertisements] = React.useState<Advertisement[]>(
+    []
+  );
   const [searched, setSearched] = React.useState<string>("");
+  const [loading, setLoading] = React.useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchAdvertisements = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get(`/api/advertisement`);
+        setAdvertisements(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar anúncios:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdvertisements();
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -149,50 +99,36 @@ const Home: React.FC = () => {
           </div>
         </section>
         <div className="container mx-auto px-4 py-12">
-          <section className="mb-16">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                  Propriedades em Destaque
-                </h2>
-                <p className="text-gray-600">
-                  Os melhores imóveis selecionados especialmente para você
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {featuredProps.map((property) => (
-                <PropertyCard key={property.id} property={property} featured />
-              ))}
-            </div>
-          </section>
-
-          {/* All Properties */}
           <section>
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                  Todas as Propriedades
+                  Propriedades Disponíveis
                 </h2>
-                <p className="text-gray-600">
-                  {regularProps.length} imóveis disponíveis
-                </p>
+                {!loading && <p className="text-gray-600">
+                  {advertisements.length} imóveis disponíveis
+                </p>}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {regularProps.map((property) => (
-                <PropertyCard key={property.id} property={property} />
-              ))}
+            {loading ?
+            <div className="flex items-center justify-center h-full">
+              <span className="loading loading-spinner"></span>
+
             </div>
+            :
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {advertisements.map((advertisement) => (
+                <PropertyCard key={advertisement.id} advertisement={advertisement} />
+              ))}
+            </div>}
           </section>
 
-          <div className="text-center mt-12">
+          {advertisements.length > 0  && <div className="text-center mt-12">
             <button className="px-8 py-3 text-lg btn bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-300">
               Carregar Mais Propriedades
             </button>
-          </div>
+          </div>}
         </div>
       </main>
     </>

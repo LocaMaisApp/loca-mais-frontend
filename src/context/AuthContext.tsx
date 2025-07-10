@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = cookie.get("token");
-    if (!token) {
+    if (!token && document.location.pathname !== "/") {
       signOut();
     }
   }, []);

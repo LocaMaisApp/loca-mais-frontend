@@ -38,7 +38,7 @@ const SignIn: React.FC = () => {
   });
 
   const onSubmit = async (data: SignInFormData) => {
-    setError(null); 
+    setError(null);
     try {
       const response = await api.post("/auth/signIn", data);
       const responseData = response.data as { accessToken: string; user: User };
@@ -54,7 +54,7 @@ const SignIn: React.FC = () => {
     <div className="relative flex size-full h-screen max-h-screen flex-col bg-gray-50 overflow-x-hidden font-sans">
       <div className="flex h-full grow flex-col">
         <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#eaedf1] px-10 py-1">
-          <div className="flex items-center gap-4 text-[#101418]">
+          <Link to={"/"} className="cursor-pointer flex items-center gap-2">
             <img
               src="/LocaMaisLogoIcone.png"
               alt="LocaMais Logo"
@@ -63,7 +63,7 @@ const SignIn: React.FC = () => {
             <h2 className="text-[#101418] text-lg font-bold leading-tight tracking-[-0.015em]">
               LocaMais
             </h2>
-          </div>
+          </Link>
         </header>
         <div className="px-40 flex flex-1 justify-center">
           <div className="flex flex-col py-1 max-w-3/4 flex-1">
@@ -115,7 +115,9 @@ const SignIn: React.FC = () => {
                   )}
                 </label>
               </div>
-              {error && <p className="text-sm font-medium text-red-500">{error}</p>}
+              {error && (
+                <p className="text-sm font-medium text-red-500">{error}</p>
+              )}
 
               <div className="flex flex-col items-center gap-4 px-4 py-1">
                 <button

@@ -15,14 +15,16 @@ const Navbar = () => {
   return (
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#eaedf1] px-10 py-3">
       <div className="flex items-center gap-4 text-[#101418]">
-        <img
-          src="/LocaMaisLogoIcone.png"
-          alt="LocaMais Logo"
-          className="w-12 h-12"
-        />
-        <h2 className="text-[#101418] text-lg font-bold leading-tight tracking-[-0.015em]">
-          LocaMais
-        </h2>
+        <Link to={"/"} className="cursor-pointer">
+          <img
+            src="/LocaMaisLogoIcone.png"
+            alt="LocaMais Logo"
+            className="w-12 h-12"
+          />
+          <h2 className="text-[#101418] text-lg font-bold leading-tight tracking-[-0.015em]">
+            LocaMais
+          </h2>
+        </Link>
         {user && user?.type == "LANDLORD" && (
           <Link
             to={"/anunciar"}
@@ -57,8 +59,8 @@ const Navbar = () => {
               placeholder="Buscar propriedades"
             />
           </label>
-          
-          <div 
+
+          <div
             className="relative"
             onMouseLeave={() => setIsDropdownOpen(false)}
           >
@@ -74,10 +76,10 @@ const Navbar = () => {
                   {user.name || user.email}
                 </span>
               </div>
-              <BiChevronDown 
+              <BiChevronDown
                 className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
-                  isDropdownOpen ? 'rotate-180' : ''
-                }`} 
+                  isDropdownOpen ? "rotate-180" : ""
+                }`}
               />
             </button>
 
@@ -91,13 +93,15 @@ const Navbar = () => {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-900">
-                        {user.name || 'Usuário'}
+                        {user.name || "Usuário"}
                       </p>
                       <p className="text-xs text-gray-500 truncate">
                         {user.email}
                       </p>
                       <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full mt-1">
-                        {user.type === 'LANDLORD' ? 'Proprietário' : 'Inquilino'}
+                        {user.type === "LANDLORD"
+                          ? "Proprietário"
+                          : "Inquilino"}
                       </span>
                     </div>
                   </div>
@@ -113,7 +117,7 @@ const Navbar = () => {
                     <BiUser className="w-4 h-4 text-gray-500" />
                     Meu Perfil
                   </Link>
-                  
+
                   <Link
                     to="/settings"
                     className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
@@ -123,28 +127,53 @@ const Navbar = () => {
                     Configurações
                   </Link>
 
-                  {user.type === 'LANDLORD' && (
+                  {user.type === "LANDLORD" && (
                     <Link
                       to="/my-properties"
                       className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
                       onClick={() => setIsDropdownOpen(false)}
                     >
-                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0V3"></path>
+                      <svg
+                        className="w-4 h-4 text-gray-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+                        ></path>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0V3"
+                        ></path>
                       </svg>
                       Meus Imóveis
                     </Link>
                   )}
 
-                  {user.type === 'TENANT' && (
+                  {user.type === "TENANT" && (
                     <Link
                       to="/my-rentals"
                       className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
                       onClick={() => setIsDropdownOpen(false)}
                     >
-                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                      <svg
+                        className="w-4 h-4 text-gray-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                        ></path>
                       </svg>
                       Meus Aluguéis
                     </Link>
