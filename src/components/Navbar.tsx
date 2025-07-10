@@ -36,12 +36,20 @@ const Navbar = () => {
           </h2>
         </Link>
         {user && user?.type == "LANDLORD" && (
-          <Link
-            to={"/anunciar"}
-            className="text-neutral-600 hover:underline ml-6 text-sm font-semibold leading-tight tracking-[-0.015em] hover:text-primary-900 transition-colors duration-200"
-          >
-            Anunciar Imóvel
-          </Link>
+          <>
+            <Link
+              to={"/anunciar"}
+              className="text-neutral-600 hover:underline ml-6 text-sm font-semibold leading-tight tracking-[-0.015em] hover:text-primary-900 transition-colors duration-200"
+            >
+              Anunciar Imóvel
+            </Link>
+            <Link
+              to={"/propriedades/cadastrar"}
+              className="text-neutral-600 hover:underline ml-6 text-sm font-semibold leading-tight tracking-[-0.015em] hover:text-primary-900 transition-colors duration-200"
+            >
+              Cadastrar Imóvel
+            </Link>
+          </>
         )}
       </div>
       {user && (

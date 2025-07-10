@@ -6,7 +6,7 @@ import Navbar from "../../components/Navbar";
 import { useAuth } from "../../hooks/useAuth";
 import { handleApiError } from "../../utils/errorHandler";
 import CreateAdvertisementErrorModal from "./CreateAdvertisementErrorModal";
-import CreateAdvertisementSuccessModal from "./CreateAdvertisementSucessModal";
+import CreateAdvertisementSuccessModal from "./CreateAdvertisementSuccessModal";
 
 interface Property {
   id: number;

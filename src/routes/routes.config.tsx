@@ -3,6 +3,7 @@ import Advertisement from '../pages/Advertisement/Advertisement';
 import SignIn from '../pages/Auth/SignIn/SignIn';
 import SignUp from '../pages/Auth/SignUp/SignUp';
 import CreateAdvertisement from '../pages/CreateAdvertisement/CreateAdvertisement';
+import CreateProperty from '../pages/CreateProperty/CreateProperty';
 import Home from '../pages/Home/Home';
 import LandingPage from '../pages/LandingPage/LandingPage';
 import Search from '../pages/Search/Search';
@@ -27,6 +28,10 @@ export const routes: RouteObject[] = [
   {
     path:"/anunciar",
     element:<CreateAdvertisement/>
+  },
+  {
+    path:"/propriedades/cadastrar",
+    element:<CreateProperty/>
   },
   {
     path:"/search",

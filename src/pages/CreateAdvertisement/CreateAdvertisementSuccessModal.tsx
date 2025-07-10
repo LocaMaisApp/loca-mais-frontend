@@ -13,7 +13,7 @@ const CreateAdvertisementSuccessModal = React.forwardRef<HTMLDialogElement>((_, 
 
   return (
     <dialog ref={ref} id="advertisementSuccessModal" className="modal">
-      <div className="modal-box max-w-md">
+      <div className="modal-box max-w-md modal-open">
         <div className="flex items-center gap-3 mb-6">
           <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
             <span className="text-2xl">✓</span>
@@ -43,7 +43,7 @@ const CreateAdvertisementSuccessModal = React.forwardRef<HTMLDialogElement>((_, 
                 <strong>Parabéns!</strong> Agora é só aguardar os interessados entrarem em contato.
               </p>
               <p className="text-sm text-blue-700">
-                Você pode gerenciar seus anúncios e ver as mensagens recebidas a qualquer momento.
+                Você pode gerenciar seus anúncios a qualquer momento.
               </p>
             </div>
           </div>
@@ -83,6 +83,8 @@ const CreateAdvertisementSuccessModal = React.forwardRef<HTMLDialogElement>((_, 
     </dialog>
   );
 });
+
+CreateAdvertisementSuccessModal.displayName = "CreateAdvertisementSuccessModal";
 
 
 export default CreateAdvertisementSuccessModal;

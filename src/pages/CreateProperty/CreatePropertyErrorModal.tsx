@@ -1,7 +1,7 @@
 import React from 'react';
 import { BiError } from 'react-icons/bi';
 
-const CreateAdvertisementErrorModal = React.forwardRef<
+const PropertyErrorModal = React.forwardRef<
   HTMLDialogElement,
   {
     error: string | null;
@@ -34,7 +34,7 @@ const CreateAdvertisementErrorModal = React.forwardRef<
                 <strong>Não se preocupe!</strong> Isso acontece às vezes.
               </p>
               <p className="text-sm text-green-700">
-                Dê uma olhada nos dados que você preencheu e tente novamente. Se precisar de ajuda, estamos aqui!
+                Dê uma olhada nos dados que você preencheu e tente novamente.
               </p>
             </div>
           </div>
@@ -70,4 +70,4 @@ const CreateAdvertisementErrorModal = React.forwardRef<
 });
 
 
-export default CreateAdvertisementErrorModal;
+export default PropertyErrorModal;
