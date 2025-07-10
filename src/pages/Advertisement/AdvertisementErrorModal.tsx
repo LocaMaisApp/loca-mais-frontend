@@ -1,4 +1,5 @@
 import React from 'react';
+import { BiError } from 'react-icons/bi';
 
 const AdvertisementErrorModal = React.forwardRef<
   HTMLDialogElement,
@@ -12,7 +13,9 @@ const AdvertisementErrorModal = React.forwardRef<
         {/* Header mais amigável */}
         <div className="flex items-center gap-3 mb-6">
           <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-            <span className="text-2xl">😅</span>
+            <span className="text-2xl">
+              <BiError className="text-red-500" />
+            </span>
           </div>
           <h3 className="font-semibold text-xl text-gray-800">Ops! Algo deu errado</h3>
         </div>
@@ -20,9 +23,6 @@ const AdvertisementErrorModal = React.forwardRef<
         {/* Mensagem de erro mais humana */}
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 rounded-r-lg">
           <div className="flex">
-            <div className="flex-shrink-0">
-              <span className="text-lg">ℹ️</span>
-            </div>
             <div className="ml-3">
               <p className="text-sm text-blue-800 leading-relaxed">{error}</p>
             </div>
@@ -32,13 +32,12 @@ const AdvertisementErrorModal = React.forwardRef<
         {/* Mensagem de encorajamento */}
         <div className="bg-green-50 p-4 rounded-lg mb-6 border border-green-200">
           <div className="flex items-start">
-            <span className="text-lg mr-2">🤗</span>
             <div>
               <p className="text-sm text-green-800 mb-1">
                 <strong>Não se preocupe!</strong> Isso acontece às vezes.
               </p>
               <p className="text-sm text-green-700">
-                Dê uma olhada nos dados que você preencheu e tente novamente. Se precisar de ajuda, estamos aqui! 💪
+                Dê uma olhada nos dados que você preencheu e tente novamente. Se precisar de ajuda, estamos aqui!
               </p>
             </div>
           </div>
@@ -54,7 +53,7 @@ const AdvertisementErrorModal = React.forwardRef<
               }
             }}
           >
-            Entendi! 👍
+            Entendi!
           </button>
         </div>
       </div>
