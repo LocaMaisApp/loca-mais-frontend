@@ -12,15 +12,21 @@ export const PropertyCard = ({ advertisement }: PropertyCardProps) => {
 
   return (
     <Link
-    to={`/anuncios/${prop.id}`}
+      to={`/anuncios/${prop.id}`}
       className={`card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1`}
     >
       <figure className="relative">
-        <img
-          src={`${import.meta.env.VITE_API_URL}${prop.images[0]}`}
-          alt="Imagem do imóvel"
-          className={`w-full object-cover h-48`}
-        />
+        {prop.images[0] ? (
+          <img
+            src={`${import.meta.env.VITE_API_URL}${prop.images[0]}`}
+            alt="Imagem do imóvel"
+            className={`w-full object-cover h-48`}
+          />
+        ) : (
+          <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-500">Imagem não disponível</span>
+          </div>
+        )}
       </figure>
 
       <div className="card-body p-4">
