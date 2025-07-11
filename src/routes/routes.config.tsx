@@ -11,6 +11,7 @@ import LandingPage from "../pages/LandingPage/LandingPage";
 import Property from "../pages/Property/Property";
 import Search from "../pages/Search/Search";
 import Reports from "../pages/Reports/Reports";
+import TenantReports from "../pages/TenantReports";
 
 export const routes: RouteObject[] = [
   {
@@ -49,7 +50,7 @@ export const routes: RouteObject[] = [
     path: "/proprietario/gerenciar/relatorios",
     element: (
       <LandlordRoute>
-        <Reports/>
+        <Reports />
       </LandlordRoute>
     ),
   },
@@ -70,6 +71,22 @@ export const routes: RouteObject[] = [
     element: (
       <TenantRoute>
         <Advertisement />,
+      </TenantRoute>
+    ),
+  },
+  {
+    path: "/relatorios",
+    element: (
+      <TenantRoute>
+        <TenantReports />
+      </TenantRoute>
+    ),
+  },
+  {
+    path: "/inquilino/contratos",
+    element: (
+      <TenantRoute>
+        <TenantReports />
       </TenantRoute>
     ),
   },

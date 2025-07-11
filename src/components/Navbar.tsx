@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BiChevronDown, BiCog, BiLogOut, BiSolidReport, BiUser } from "react-icons/bi";
+import { BiChevronDown, BiLogOut, BiSolidReport, BiUser } from "react-icons/bi";
 import { BsHouse, BsHouseFill } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -128,24 +128,6 @@ const Navbar = () => {
               </div>
 
               <div className="py-1">
-                <Link
-                  to="/profile"
-                  className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  <BiUser className="w-4 h-4 text-gray-500" />
-                  Meu Perfil
-                </Link>
-
-                <Link
-                  to="/settings"
-                  className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  <BiCog className="w-4 h-4 text-gray-500" />
-                  Configurações
-                </Link>
-
                 {user.type === "LANDLORD" && (
                   <>
                   <Link
@@ -169,11 +151,12 @@ const Navbar = () => {
 
                 {user.type === "TENANT" && (
                   <Link
-                    to="/my-rentals"
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 "
+                    to="/inquilino/contratos"
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsDropdownOpen(false)}
                   >
                     <BsHouseFill className="w-4 h-4 text-gray-500" />
-                    Meus Aluguéis
+                    Meus Contratos
                   </Link>
                 )}
 
