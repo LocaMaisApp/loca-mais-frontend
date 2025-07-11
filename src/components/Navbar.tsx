@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BiChevronDown, BiCog, BiLogOut, BiUser } from "react-icons/bi";
+import { BiChevronDown, BiCog, BiLogOut, BiSolidReport, BiUser } from "react-icons/bi";
 import { BsHouse, BsHouseFill } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -147,14 +147,24 @@ const Navbar = () => {
                 </Link>
 
                 {user.type === "LANDLORD" && (
+                  <>
                   <Link
                     to="/proprietario/gerenciar"
                     className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setIsDropdownOpen(false)}
-                  >
+                    >
                     <BsHouse className="w-4 h-4 text-gray-500" />
                     Gerenciar
                   </Link>
+                  <Link
+                    to="/proprietario/gerenciar/relatorios"
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsDropdownOpen(false)}
+                    >
+                    <BiSolidReport className="w-4 h-4 text-gray-500" />
+                    Relatórios
+                  </Link>
+                    </>
                 )}
 
                 {user.type === "TENANT" && (
