@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { BiPlus, BiSearch } from "react-icons/bi";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import { MdBathtub, MdBed, MdSquareFoot } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import Navbar from "../../components/Navbar";
 import { useAuth } from "../../hooks/useAuth";
@@ -113,26 +113,13 @@ const PropertyPage: React.FC = () => {
     return matchesSearch;
   });
 
-  if (user?.type !== "LANDLORD") {
-    return (
-      <>
-        <Navbar />
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">
-              Acesso Negado
-            </h1>
-            <p className="text-gray-600">
-              Esta página é apenas para proprietários.
-            </p>
-            <Link to="/" className="btn bg-primary-600 mt-4">
-              Voltar ao Início
-            </Link>
-          </div>
-        </div>
-      </>
-    );
-  }
+  const navigate=useNavigate();
+
+  useEffect(()=>{
+    if (!user || user.type !== "LANDLORD") {
+      navigate("/")
+    }
+  },[user])
 
   return (
     <>
@@ -243,7 +230,7 @@ const PropertyPage: React.FC = () => {
                   : "Comece cadastrando sua primeira propriedade"}
               </p>
               {!searchTerm && (
-                <Link to="/create-property" className="btn btn-primary">
+                <Link to="/propriedades/cadastrar" className="btn btn-primary">
                   Cadastrar Primeira Propriedade
                 </Link>
               )}
@@ -261,9 +248,15 @@ const PropertyPage: React.FC = () => {
                   >
                     <div className="p-6">
                       <div className="mb-4">
+                        <div className="flex justify-between">
                         <h3 className="text-lg font-semibold text-gray-800 mb-2">
                           {property.name}
                         </h3>
+                        {advertisement && 
+                        <span className="badge bg-green-500 text-white text-sm text-gray-500">
+                          Anunciado  
+                          </span>}
+                        </div>
                         <p className="text-gray-600 text-sm">
                           {property.street}, {property.number} - {property.city}
                           , {property.state}
@@ -286,25 +279,8 @@ const PropertyPage: React.FC = () => {
                           </div>
                         </div>
                       </div>
-
-                      {advertisement && (
-                        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                          <div className="text-lg font-bold text-green-600">
-                            R$ {advertisement.value.toLocaleString()}
-                          </div>
-                          <div className="text-xs text-gray-500">por mês</div>
-                        </div>
-                      )}
-
                       <div className="flex justify-between items-center">
                         <div className="flex space-x-2">
-                          <Link
-                            to={`/property/edit/${property.id}`}
-                            className="btn btn-sm btn-outline btn-primary"
-                            title="Editar propriedade"
-                          >
-                            <FaEdit className="w-4 h-4" />
-                          </Link>
 
                           {advertisement ? (
                             <Link

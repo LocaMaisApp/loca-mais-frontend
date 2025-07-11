@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import Navbar from "../../components/Navbar";
 import { PropertyCard } from "../../components/PropertyCard";
+import { useAuth } from "../../hooks/useAuth";
 
 export interface Property {
   id: number;
@@ -37,6 +38,8 @@ export interface Advertisement {
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isLandlord = user?.role === "landlord";
   const [advertisements, setAdvertisements] = React.useState<Advertisement[]>(
     []
   );
@@ -66,6 +69,12 @@ const Home: React.FC = () => {
     fetchAdvertisements();
   }, []);
 
+  useEffect(() => {
+    if (user && !isLandlord) {
+      navigate("/proprietario/gerenciar");
+    }
+  }, [user, isLandlord]);
+
   return (
     <>
       <Navbar />
@@ -83,7 +92,10 @@ const Home: React.FC = () => {
             </div>
 
             <div className="max-w-4xl mx-auto">
-              <form onSubmit={handleSearch} className="bg-white rounded-2xl p-6 shadow-2xl">
+              <form
+                onSubmit={handleSearch}
+                className="bg-white rounded-2xl p-6 shadow-2xl"
+              >
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1 relative">
                     <CiMapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -97,7 +109,10 @@ const Home: React.FC = () => {
                   </div>
 
                   <div className="flex gap-2">
-                    <button type="submit" className="px-8 py-4 bg-primary-400 rounded-xl text-white hover:bg-primary-600 transition-colors duration-300 flex items-center">
+                    <button
+                      type="submit"
+                      className="px-8 py-4 bg-primary-400 rounded-xl text-white hover:bg-primary-600 transition-colors duration-300 flex items-center"
+                    >
                       <BiSearch className="inline-block mr-2" />
                       Buscar
                     </button>
@@ -114,30 +129,37 @@ const Home: React.FC = () => {
                 <h2 className="text-3xl font-bold text-gray-800 mb-2">
                   Propriedades Disponíveis
                 </h2>
-                {!loading && <p className="text-gray-600">
-                  {advertisements.length} imóveis disponíveis
-                </p>}
+                {!loading && (
+                  <p className="text-gray-600">
+                    {advertisements.length} imóveis disponíveis
+                  </p>
+                )}
               </div>
             </div>
 
-            {loading ?
-            <div className="flex items-center justify-center h-full">
-              <span className="loading loading-spinner"></span>
-
-            </div>
-            :
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {advertisements.map((advertisement) => (
-                <PropertyCard key={advertisement.id} advertisement={advertisement} />
-              ))}
-            </div>}
+            {loading ? (
+              <div className="flex items-center justify-center h-full">
+                <span className="loading loading-spinner"></span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {advertisements.map((advertisement) => (
+                  <PropertyCard
+                    key={advertisement.id}
+                    advertisement={advertisement}
+                  />
+                ))}
+              </div>
+            )}
           </section>
 
-          {advertisements.length > 0  && <div className="text-center mt-12">
-            <button className="px-8 py-3 text-lg btn bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-300">
-              Carregar Mais Propriedades
-            </button>
-          </div>}
+          {advertisements.length > 0 && (
+            <div className="text-center mt-12">
+              <button className="px-8 py-3 text-lg btn bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-300">
+                Carregar Mais Propriedades
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </>

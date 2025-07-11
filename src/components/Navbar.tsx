@@ -148,12 +148,12 @@ const Navbar = () => {
 
                 {user.type === "LANDLORD" && (
                   <Link
-                    to="/propriedades"
+                    to="/proprietario/gerenciar"
                     className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setIsDropdownOpen(false)}
                   >
                     <BsHouse className="w-4 h-4 text-gray-500" />
-                    Meus Imóveis
+                    Gerenciar
                   </Link>
                 )}
 

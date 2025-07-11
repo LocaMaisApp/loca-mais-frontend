@@ -1,4 +1,6 @@
 import type { RouteObject } from "react-router-dom";
+import LandlordRoute from "../components/LandlordRoute";
+import TenantRoute from "../components/TenantRoute";
 import Advertisement from "../pages/Advertisement/Advertisement";
 import SignIn from "../pages/Auth/SignIn/SignIn";
 import SignUp from "../pages/Auth/SignUp/SignUp";
@@ -28,15 +30,27 @@ export const routes: RouteObject[] = [
   },
   {
     path: "/anunciar",
-    element: <CreateAdvertisement />,
+    element: (
+      <LandlordRoute>
+        <CreateAdvertisement />
+      </LandlordRoute>
+    ),
   },
   {
-    path: "/propriedades",
-    element: <Property />,
+    path: "/proprietario/gerenciar",
+    element: (
+      <LandlordRoute>
+        <Property />
+      </LandlordRoute>
+    ),
   },
   {
     path: "/propriedades/cadastrar",
-    element: <CreateProperty />,
+    element: (
+      <LandlordRoute>
+        <CreateProperty />,
+      </LandlordRoute>
+    ),
   },
   {
     path: "/search",
@@ -44,7 +58,11 @@ export const routes: RouteObject[] = [
   },
   {
     path: "/anuncios/:id",
-    element: <Advertisement />,
+    element: (
+      <TenantRoute>
+        <Advertisement />,
+      </TenantRoute>
+    ),
   },
 ];
 
