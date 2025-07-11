@@ -6,7 +6,7 @@ import type { Advertisement, Property } from "./Property";
 interface DeleteModalProps {
   ref: React.RefObject<HTMLDialogElement | null>;
   selected: Property | Advertisement | null;
-  type: "properties" | "advertisements";
+  type: "properties" | "advertisements" | "contracts";
   hasAd?: boolean;
   onUpdate: () => void;
 }

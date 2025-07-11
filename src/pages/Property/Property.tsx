@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { BiPlus, BiSearch } from "react-icons/bi";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import { MdBathtub, MdBed, MdSquareFoot } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
+import type { Contract } from "../../components/ContractList";
+import ContractList from "../../components/ContractList";
 import Navbar from "../../components/Navbar";
 import { useAuth } from "../../hooks/useAuth";
 import DeleteModal from "./DeleteModal";
@@ -43,20 +45,22 @@ const PropertyPage: React.FC = () => {
   const { user } = useAuth();
   const [properties, setProperties] = useState<Property[]>([]);
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [show, setShow] = useState<"advertisements" | "properties">(
-    "properties"
-  );
+  const [show, setShow] = useState<
+    "advertisements" | "properties" | "contracts"
+  >("properties");
   const [selectedAdvertisement, setSelectedAdvertisement] =
     useState<Advertisement | null>(null);
+  const editRef = useRef<HTMLDialogElement>(null);
+
+  const deleteRef = useRef<HTMLDialogElement>(null);
   const [selectedToDelete, setSelectedToDelete] = useState<
     Advertisement | Property | null
   >(null);
-  const editRef = useRef<HTMLDialogElement>(null);
-  const deleteRef = useRef<HTMLDialogElement>(null);
 
-  const fetchLandlordProperties = async () => {
+  const fetchLandlordProperties = useCallback(async () => {
     try {
       setLoading(true);
       const response = await api.get(`/api/landlords/${user?.id}/properties`);
@@ -66,9 +70,9 @@ const PropertyPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
 
-  const fetchLandlordAdvertisements = async () => {
+  const fetchLandlordAdvertisements = useCallback(async () => {
     try {
       const response = await api.get(
         `/api/landlords/${user?.id}/advertisements`
@@ -77,22 +81,39 @@ const PropertyPage: React.FC = () => {
     } catch (error) {
       console.error("Erro ao buscar anúncios:", error);
     }
-  };
+  }, [user?.id]);
+
+  const fetchAllContracts = useCallback(async () => {
+    try {
+      const response = await api.get(`/api/landlords/${user?.id}/contracts`);
+      setContracts(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar contratos:", error);
+    }
+  }, []);
+
   useEffect(() => {
     if (user?.type === "LANDLORD") {
       fetchLandlordProperties();
       fetchLandlordAdvertisements();
+      fetchAllContracts();
     }
-  }, [user?.id, user?.type]);
+  }, [
+    user?.id,
+    user?.type,
+    fetchLandlordProperties,
+    fetchLandlordAdvertisements,
+    fetchAllContracts,
+  ]);
 
   const onUpdate = () => {
     setAdvertisements([]);
     setProperties([]);
+    setContracts([]);
     fetchLandlordProperties();
     fetchLandlordAdvertisements();
+    fetchAllContracts();
   };
-
- 
 
   const filteredProperties = properties.filter((property) => {
     const matchesSearch =
@@ -113,17 +134,35 @@ const PropertyPage: React.FC = () => {
     return matchesSearch;
   });
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
-  useEffect(()=>{
+  const handleDelete = async (advertisementId: number) => {
+    setSelectedToDelete(() => {
+      if (show === "advertisements") {
+        return advertisements.find((ad) => ad.id === advertisementId) || null;
+      }
+      return (
+        properties.find((property) => property.id === advertisementId) || null
+      );
+    });
+
+    deleteRef.current?.showModal();
+  };
+
+  useEffect(() => {
     if (!user || user.type !== "LANDLORD") {
-      navigate("/")
+      navigate("/");
     }
-  },[user])
+  }, [user, navigate]);
 
   return (
     <>
-      <DeleteModal ref={deleteRef} selected={selectedToDelete} type={show} onUpdate={onUpdate} />
+      <DeleteModal
+        ref={deleteRef}
+        selected={selectedToDelete}
+        type={show}
+        onUpdate={onUpdate}
+      />
       <EditAdvertisementModal
         advertisement={selectedAdvertisement}
         ref={editRef}
@@ -139,23 +178,29 @@ const PropertyPage: React.FC = () => {
               <h1 className="text-3xl font-bold text-gray-800">
                 {show === "properties"
                   ? "Minhas Propriedades"
-                  : "Meus Anúncios"}
+                  : show === "advertisements"
+                  ? "Meus Anúncios"
+                  : "Contratos"}
               </h1>
               <p className="text-gray-600 mt-2">
                 {show === "properties"
                   ? "Gerencie suas propriedades e anúncios"
-                  : "Visualize e gerencie seus anúncios ativos"}
+                  : show === "advertisements"
+                  ? "Visualize e gerencie seus anúncios ativos"
+                  : "Visualize e gerencie todos os contratos"}
               </p>
             </div>
-            <Link
-              to={
-                show == "properties" ? "/propriedades/cadastrar" : "/anunciar"
-              }
-              className="btn bg-primary-500 flex text-white items-center gap-2"
-            >
-              <BiPlus className="w-5 h-5" />
-              {show == "properties" ? "Nova Propriedade" : "Novo Anúncio"}
-            </Link>
+            {show !== "contracts" && (
+              <Link
+                to={
+                  show == "properties" ? "/propriedades/cadastrar" : "/anunciar"
+                }
+                className="btn bg-primary-500 flex text-white items-center gap-2"
+              >
+                <BiPlus className="w-5 h-5" />
+                {show == "properties" ? "Nova Propriedade" : "Novo Anúncio"}
+              </Link>
+            )}
           </div>
 
           <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -206,6 +251,22 @@ const PropertyPage: React.FC = () => {
                 Clique para visualizar anúncios
               </p>
             </button>
+            <button
+              onClick={() => setShow("contracts")}
+              className={`bg-white p-6 rounded-lg shadow-md border-l-4 transition-all duration-200 hover:shadow-lg text-left ${
+                show === "contracts"
+                  ? "border-green-500 ring-2 ring-green-200"
+                  : "border-green-500 hover:border-green-600"
+              }`}
+            >
+              <h3 className="text-lg font-semibold text-gray-700">Contratos</h3>
+              <p className="text-3xl font-bold text-green-600">
+                {contracts.length}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Clique para visualizar contratos
+              </p>
+            </button>
           </div>
         </div>
 
@@ -213,6 +274,12 @@ const PropertyPage: React.FC = () => {
           <div className="flex justify-center items-center py-12">
             <div className="loading loading-spinner loading-lg"></div>
           </div>
+        ) : show === "contracts" ? (
+          <ContractList
+            contracts={contracts}
+            loading={loading}
+            searchTerm={searchTerm}
+          />
         ) : show === "properties" ? (
           filteredProperties.length === 0 ? (
             <div className="text-center py-12">
@@ -249,13 +316,14 @@ const PropertyPage: React.FC = () => {
                     <div className="p-6">
                       <div className="mb-4">
                         <div className="flex justify-between">
-                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                          {property.name}
-                        </h3>
-                        {advertisement && 
-                        <span className="badge bg-green-500 text-white text-sm text-gray-500">
-                          Anunciado  
-                          </span>}
+                          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                            {property.name}
+                          </h3>
+                          {advertisement && (
+                            <span className="badge bg-green-500 text-white text-sm text-gray-500">
+                              Anunciado
+                            </span>
+                          )}
                         </div>
                         <p className="text-gray-600 text-sm">
                           {property.street}, {property.number} - {property.city}
@@ -281,7 +349,6 @@ const PropertyPage: React.FC = () => {
                       </div>
                       <div className="flex justify-between items-center">
                         <div className="flex space-x-2">
-
                           {advertisement ? (
                             <Link
                               to={`/anuncios/${advertisement.id}`}
@@ -301,7 +368,9 @@ const PropertyPage: React.FC = () => {
                           )}
 
                           <button
-                            onClick={() => setSelectedToDelete(property)}
+                            onClick={() => {
+                              console.log("Delete property", property.id);
+                            }}
                             className="btn btn-sm btn-outline btn-error"
                             title="Excluir propriedade"
                           >
@@ -418,13 +487,10 @@ const PropertyPage: React.FC = () => {
                       </button>
                       <button
                         onClick={() => {
-                          if (advertisement) {
-                            setSelectedToDelete(advertisement);
-                            deleteRef.current?.showModal();
-                          }
+                          handleDelete(advertisement.id);
                         }}
                         className="btn btn-sm btn-outline btn-error"
-                        title="Editar anúncio"
+                        title="Excluir anúncio"
                       >
                         <FaTrash className="w-4 h-4" />
                       </button>

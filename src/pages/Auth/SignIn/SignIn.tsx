@@ -10,11 +10,10 @@ import { handleApiError } from "../../../utils/errorHandler";
 
 // Schema de validação com Zod para login
 const signInSchema = z.object({
-  email: z.string().min(1, "Email é obrigatório").email("Email inválido"),
+  email: z.string().min(1, "Email é obrigatório"),
   password: z
     .string()
     .min(1, "Senha é obrigatória")
-    .min(6, "Senha deve ter pelo menos 6 caracteres"),
 });
 
 type SignInFormData = z.infer<typeof signInSchema>;
