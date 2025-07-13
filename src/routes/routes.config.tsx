@@ -9,9 +9,9 @@ import CreateProperty from "../pages/CreateProperty/CreateProperty";
 import Home from "../pages/Home/Home";
 import LandingPage from "../pages/LandingPage/LandingPage";
 import Property from "../pages/Property/Property";
-import Search from "../pages/Search/Search";
 import Reports from "../pages/Reports/Reports";
-import TenantReports from "../pages/TenantReports";
+import Search from "../pages/Search/Search";
+import TenantReports from "../pages/TenantReports/TenantReports";
 
 export const routes: RouteObject[] = [
   {

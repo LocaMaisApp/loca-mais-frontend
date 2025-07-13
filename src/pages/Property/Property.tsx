@@ -359,7 +359,7 @@ const PropertyPage: React.FC = () => {
                             </Link>
                           ) : (
                             <Link
-                              to={`/create-advertisement?propertyId=${property.id}`}
+                              to={`/anunciar`}
                               className="btn btn-sm btn-outline btn-success"
                               title="Criar anúncio"
                             >
@@ -401,7 +401,7 @@ const PropertyPage: React.FC = () => {
                 : "Comece criando anúncios para suas propriedades"}
             </p>
             {!searchTerm && (
-              <Link to="/create-advertisement" className="btn btn-primary">
+              <Link to="/anunciar" className="btn btn-primary">
                 Criar Primeiro Anúncio
               </Link>
             )}

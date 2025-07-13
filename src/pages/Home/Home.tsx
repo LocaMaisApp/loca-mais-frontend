@@ -39,7 +39,6 @@ export interface Advertisement {
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isLandlord = user?.role === "landlord";
   const [advertisements, setAdvertisements] = React.useState<Advertisement[]>(
     []
   );
@@ -70,10 +69,10 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (user && !isLandlord) {
+    if (user && user.type=='LANDLORD') {
       navigate("/proprietario/gerenciar");
     }
-  }, [user, isLandlord]);
+  }, [user]);
 
   return (
     <>
