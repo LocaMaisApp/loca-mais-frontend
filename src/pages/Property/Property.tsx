@@ -90,7 +90,7 @@ const PropertyPage: React.FC = () => {
     } catch (error) {
       console.error("Erro ao buscar contratos:", error);
     }
-  }, []);
+  }, [user?.id]);
 
   useEffect(() => {
     if (user?.type === "LANDLORD") {
@@ -279,6 +279,7 @@ const PropertyPage: React.FC = () => {
             contracts={contracts}
             loading={loading}
             searchTerm={searchTerm}
+            onUpdate={fetchAllContracts}
           />
         ) : show === "properties" ? (
           filteredProperties.length === 0 ? (

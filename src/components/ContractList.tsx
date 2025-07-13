@@ -1,7 +1,8 @@
-import React from "react";
-import { BiCalendar, BiCheckCircle, BiMoney, BiXCircle } from "react-icons/bi";
+import React, { useRef, useState } from "react";
+import { BiCalendar, BiCheckCircle, BiMoney, BiPlus, BiXCircle } from "react-icons/bi";
 import { FaHome, FaMoneyBillWave } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
+import AddPaymentModal from "./AddPaymentModal";
 
 export interface Payment {
   id: number;
@@ -47,18 +48,44 @@ interface ContractListProps {
   contracts: Contract[];
   loading: boolean;
   searchTerm: string;
+  onUpdate?: () => void;
 }
 
-const ContractList: React.FC<ContractListProps> = ({ contracts, loading, searchTerm }) => {
+const ContractList: React.FC<ContractListProps> = ({
+  contracts,
+  loading,
+  searchTerm,
+  onUpdate,
+}) => {
+  const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+  const modalRef = useRef<HTMLDialogElement>(null);
+  
   const filteredContracts = contracts.filter((contract) => {
     const matchesSearch =
-      contract.propertyEntity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.propertyEntity.street.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.propertyEntity.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contract.propertyEntity.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      contract.propertyEntity.street
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      contract.propertyEntity.city
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       contract.id.toString().includes(searchTerm);
 
     return matchesSearch;
   });
+
+  const handleOpenPaymentModal = (contract: Contract) => {
+    setSelectedContract(contract);
+    modalRef.current?.showModal();
+  };
+
+  const handlePaymentUpdate = () => {
+    if (onUpdate) {
+      onUpdate();
+    }
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -115,8 +142,8 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, loading, searchT
                   <div className="flex items-center gap-2">
                     <span
                       className={`badge text-xs ${
-                        contract.active 
-                          ? "bg-green-100 text-green-800" 
+                        contract.active
+                          ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
                       }`}
                     >
@@ -147,8 +174,10 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, loading, searchT
                 {contract.propertyEntity.name}
               </h4>
               <p className="text-sm text-gray-600">
-                {contract.propertyEntity.street}, {contract.propertyEntity.number}
-                {contract.propertyEntity.complement && ` - ${contract.propertyEntity.complement}`}
+                {contract.propertyEntity.street},{" "}
+                {contract.propertyEntity.number}
+                {contract.propertyEntity.complement &&
+                  ` - ${contract.propertyEntity.complement}`}
               </p>
               <p className="text-sm text-gray-600">
                 {contract.propertyEntity.city}, {contract.propertyEntity.state}
@@ -166,7 +195,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, loading, searchT
                   {formatCurrency(contract.monthly_value)}
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <BiMoney className="w-4 h-4 text-blue-600 mr-2" />
@@ -180,7 +209,9 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, loading, searchT
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <BiCalendar className="w-4 h-4 text-purple-600 mr-2" />
-                  <span className="text-sm text-gray-600">Dia do Pagamento:</span>
+                  <span className="text-sm text-gray-600">
+                    Dia do Pagamento:
+                  </span>
                 </div>
                 <span className="font-semibold text-purple-600">
                   {contract.payment_day}
@@ -209,11 +240,15 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, loading, searchT
                 </div>
                 <div className="space-y-1">
                   {contract.payments.slice(0, 2).map((payment) => (
-                    <div key={payment.id} className="text-xs text-gray-600 flex justify-between">
+                    <div
+                      key={payment.id}
+                      className="text-xs text-gray-600 flex justify-between"
+                    >
                       <span>{formatDate(payment.createdAt)}</span>
                       <span className="font-medium">
                         {formatCurrency(payment.value)}
-                        {payment.tax > 0 && ` (+${formatCurrency(payment.tax)} taxa)`}
+                        {payment.tax > 0 &&
+                          ` (+${formatCurrency(payment.tax)} taxa)`}
                       </span>
                     </div>
                   ))}
@@ -227,6 +262,15 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, loading, searchT
             )}
 
             <div className="pt-3 border-t border-gray-200">
+              {/* Botão para Adicionar Pagamento */}
+              <button
+                onClick={() => handleOpenPaymentModal(contract)}
+                className="btn bg-primary-500 text-white btn-sm w-full mb-3 flex items-center justify-center gap-2"
+              >
+                <BiPlus className="w-4 h-4" />
+                Registrar Pagamento
+              </button>
+              
               <div className="text-xs text-gray-500 mt-1">
                 Criado em: {formatDate(contract.created_at)}
               </div>
@@ -234,6 +278,13 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, loading, searchT
           </div>
         </div>
       ))}
+      
+      {/* Modal de Adicionar Pagamento */}
+      <AddPaymentModal
+        contract={selectedContract}
+        onUpdate={handlePaymentUpdate}
+        ref={modalRef}
+      />
     </div>
   );
 };
