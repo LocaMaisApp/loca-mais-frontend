@@ -130,23 +130,23 @@ const Navbar = () => {
               <div className="py-1">
                 {user.type === "LANDLORD" && (
                   <>
-                  <Link
-                    to="/proprietario/gerenciar"
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setIsDropdownOpen(false)}
+                    <Link
+                      to="/proprietario/gerenciar"
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
                     >
-                    <BsHouse className="w-4 h-4 text-gray-500" />
-                    Gerenciar
-                  </Link>
-                  <Link
-                    to="/proprietario/gerenciar/relatorios"
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setIsDropdownOpen(false)}
+                      <BsHouse className="w-4 h-4 text-gray-500" />
+                      Gerenciar
+                    </Link>
+                    <Link
+                      to="/proprietario/gerenciar/relatorios"
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
                     >
-                    <BiSolidReport className="w-4 h-4 text-gray-500" />
-                    Relatórios
-                  </Link>
-                    </>
+                      <BiSolidReport className="w-4 h-4 text-gray-500" />
+                      Relatórios
+                    </Link>
+                  </>
                 )}
 
                 {user.type === "TENANT" && (
@@ -177,16 +177,18 @@ const Navbar = () => {
       {!user && (
         <div className="flex flex-1 justify-end gap-8">
           <div className="flex gap-2">
-            <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#b2cbe5] text-[#101418] text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#9bb8d3] transition-colors duration-200">
-              <a href="/auth/sign-up" className="truncate">
-                Cadastrar
-              </a>
-            </button>
-            <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#eaedf1] text-[#101418] text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#d1d5db] transition-colors duration-200">
-              <a href="/auth/sign-in" className="truncate">
-                Entrar
-              </a>
-            </button>
+            <Link
+              to={"/auth/sign-up"}
+              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#b2cbe5] text-[#101418] text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#9bb8d3] transition-colors duration-200"
+            >
+              Cadastrar
+            </Link>
+            <Link
+              to={"/auth/sign-in"}
+              className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#f0f7ff] text-[#101418] text-sm font-bold leading-normal tracking-[0.015em] hover:bg-[#adb9c4] transition-colors duration-200"
+            >
+              Entrar
+            </Link>
           </div>
         </div>
       )}
