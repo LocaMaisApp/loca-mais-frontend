@@ -39,8 +39,22 @@ export interface Contract {
   propertyEntity: Property;
 }
 
+export interface Ticket {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  urgent: boolean;
+  description: string;
+  status: string; 
+  property: Property;
+  tenant_id: number;
+}
+
 export interface Maintenance {
   id: number;
+  created_at: string;
+  updated_at: string;
+  finished_at?: string;
   total_value: number;
-  property: Property;
+  ticket: Ticket;
 }

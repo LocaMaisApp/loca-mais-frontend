@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
-    BiDollarCircle,
-    BiFile,
-    BiTrendingDown,
-    BiTrendingUp,
-    BiWrench,
+  BiDollarCircle,
+  BiFile,
+  BiTrendingDown,
+  BiTrendingUp,
+  BiWrench,
 } from "react-icons/bi";
 import api from "../../api/axiosConfig";
 import Navbar from "../../components/Navbar";
@@ -30,14 +30,10 @@ const ReportsPage: React.FC = () => {
   const fetchMaintenances = useCallback(async () => {
     if (!user) return;
     try {
-      const response = await api.get(`/api/landlords/${user.id}/maintenances`);
+      const response = await api.get(`/api/contract/${user.id}/maintenances`);
       setMaintenances(response.data);
-    } catch (error) {
-      console.warn(
-        "Erro ao buscar manutenções (endpoint pode não existir):",
-        error
-      );
-      setMaintenances([]); 
+    } catch {
+      console.error("Erro ao buscar manutenções");
     }
   }, [user]);
 
@@ -50,13 +46,13 @@ const ReportsPage: React.FC = () => {
     fetchData();
   }, [fetchContracts, fetchMaintenances]);
 
-  const totalEarnings = contracts.reduce(
-    (acc, contract) => {
-      const contractPayments = contract.payments.reduce((paymentAcc, payment) => paymentAcc + payment.value, 0);
-      return acc + contractPayments;
-    },
-    0
-  );
+  const totalEarnings = contracts.reduce((acc, contract) => {
+    const contractPayments = contract.payments.reduce(
+      (paymentAcc, payment) => paymentAcc + payment.value,
+      0
+    );
+    return acc + contractPayments;
+  }, 0);
   const totalExpenses = maintenances.reduce(
     (acc, maintenance) => acc + maintenance.total_value,
     0
@@ -159,6 +155,9 @@ const ReportsPage: React.FC = () => {
                         <tr>
                           <th>ID Manutenção</th>
                           <th>Imóvel</th>
+                          <th>Descrição</th>
+                          <th>Status</th>
+                          <th>Urgente</th>
                           <th>Custo Total</th>
                         </tr>
                       </thead>
@@ -166,7 +165,26 @@ const ReportsPage: React.FC = () => {
                         {maintenances.map((maintenance) => (
                           <tr key={maintenance.id}>
                             <td>{maintenance.id}</td>
-                            <td>{maintenance.property.name}</td>
+                            <td>{maintenance.ticket.property.name}</td>
+                            <td className="max-w-xs truncate" title={maintenance.ticket.description}>
+                              {maintenance.ticket.description}
+                            </td>
+                            <td>
+                              <span className={`badge ${
+                                maintenance.ticket.status === 'COMPLETED' ? 'badge-success' : 
+                                maintenance.ticket.status === 'IN_PROGRESS' ? 'badge-warning' : 
+                                'badge-error'
+                              }`}>
+                                {maintenance.ticket.status}
+                              </span>
+                            </td>
+                            <td>
+                              {maintenance.ticket.urgent ? (
+                                <span className="badge badge-error">Sim</span>
+                              ) : (
+                                <span className="badge badge-ghost">Não</span>
+                              )}
+                            </td>
                             <td>R$ {maintenance.total_value.toFixed(2)}</td>
                           </tr>
                         ))}

@@ -123,7 +123,6 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
           </div>
         )}
 
-        {/* Informações do Contrato */}
         <div className="bg-base-200 rounded-lg p-4 mb-6">
           <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
             <BiDollarCircle className="w-5 h-5 text-green-600" />
@@ -139,7 +138,6 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Valor do Pagamento */}
           <div className="form-control">
             <label className="label">
               <span className="label-text font-semibold flex items-center gap-2">
@@ -188,7 +186,6 @@ const AddPaymentModal: React.FC<AddPaymentModalProps> = ({
             </label>
           </div>
 
-          {/* Resumo do Valor Total */}
           <div className="bg-green-50 rounded-lg p-4 border border-green-200">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium text-green-800">Valor Total:</span>
