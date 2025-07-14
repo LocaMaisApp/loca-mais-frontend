@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import type { Contract } from "../../components/ContractList";
 import ContractList from "../../components/ContractList";
+import CreateContractModal from "../../components/CreateContractModal";
 import Navbar from "../../components/Navbar";
 import { useAuth } from "../../hooks/useAuth";
 import DeleteModal from "./DeleteModal";
@@ -53,7 +54,9 @@ const PropertyPage: React.FC = () => {
   >("properties");
   const [selectedAdvertisement, setSelectedAdvertisement] =
     useState<Advertisement | null>(null);
+  const [isCreateContractModalOpen, setIsCreateContractModalOpen] = useState(false);
   const editRef = useRef<HTMLDialogElement>(null);
+  const createContractRef = useRef<HTMLDialogElement>(null);
 
   const deleteRef = useRef<HTMLDialogElement>(null);
   const [selectedToDelete, setSelectedToDelete] = useState<
@@ -149,6 +152,16 @@ const PropertyPage: React.FC = () => {
     deleteRef.current?.showModal();
   };
 
+  const handleOpenCreateContractModal = () => {
+    setIsCreateContractModalOpen(true);
+    createContractRef.current?.showModal();
+  };
+
+  const handleCloseCreateContractModal = () => {
+    setIsCreateContractModalOpen(false);
+    createContractRef.current?.close();
+  };
+
   useEffect(() => {
     if (!user || user.type !== "LANDLORD") {
       navigate("/");
@@ -170,6 +183,15 @@ const PropertyPage: React.FC = () => {
           onUpdate();
         }}
       />
+      <CreateContractModal
+        ref={createContractRef}
+        isOpen={isCreateContractModalOpen}
+        onUpdate={() => {
+          onUpdate();
+          handleCloseCreateContractModal();
+        }}
+        onClose={handleCloseCreateContractModal}
+      />
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -190,7 +212,7 @@ const PropertyPage: React.FC = () => {
                   : "Visualize e gerencie todos os contratos"}
               </p>
             </div>
-            {show !== "contracts" && (
+            {show !== "contracts" ? (
               <Link
                 to={
                   show == "properties" ? "/propriedades/cadastrar" : "/anunciar"
@@ -200,6 +222,14 @@ const PropertyPage: React.FC = () => {
                 <BiPlus className="w-5 h-5" />
                 {show == "properties" ? "Nova Propriedade" : "Novo Anúncio"}
               </Link>
+            ) : (
+              <button
+                onClick={handleOpenCreateContractModal}
+                className="btn bg-primary-500 flex text-white items-center gap-2"
+              >
+                <BiPlus className="w-5 h-5" />
+                Novo Contrato
+              </button>
             )}
           </div>
 
