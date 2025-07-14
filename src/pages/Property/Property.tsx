@@ -409,6 +409,14 @@ const PropertyPage: React.FC = () => {
                           </button>
                         </div>
                       </div>
+                      <div className="flex justify-end gap-2 mt-4">
+                        <Link
+                          to={`/proprietario/imovel/${property.id}/tickets`}
+                          className="btn btn-outline btn-info"
+                        >
+                          Ver Tickets
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 );
