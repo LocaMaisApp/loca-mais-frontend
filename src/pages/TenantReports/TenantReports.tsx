@@ -14,12 +14,15 @@ import api from "../../api/axiosConfig";
 import Navbar from "../../components/Navbar";
 import { useAuth } from "../../hooks/useAuth";
 import type { Contract } from "../Reports/types";
+import CreateTicketModal from "../../components/CreateTicketModal";
 
 const TenantReportsPage: React.FC = () => {
   const { user } = useAuth();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [openContracts, setOpenContracts] = useState<Set<number>>(new Set());
+  const [ticketModalOpen, setTicketModalOpen] = useState(false);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(null);
 
   const toggleContract = (contractId: number) => {
     setOpenContracts(prev => {
@@ -131,6 +134,15 @@ const TenantReportsPage: React.FC = () => {
         message: `Próximo pagamento em ${diffDays} dia(s)`,
       };
     }
+  };
+
+  const handleOpenTicketModal = (propertyId: number) => {
+    setSelectedPropertyId(propertyId);
+    setTicketModalOpen(true);
+  };
+  const handleCloseTicketModal = () => {
+    setTicketModalOpen(false);
+    setSelectedPropertyId(null);
   };
 
   return (
@@ -494,6 +506,17 @@ const TenantReportsPage: React.FC = () => {
                           </div>
                         </div>
                       </div>
+                      {/* Botão de abrir ticket para contratos ativos */}
+                      {contract.active && (
+                        <div className="p-4 border-t flex justify-end">
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleOpenTicketModal(contract.propertyEntity.id)}
+                          >
+                            Abrir Ticket de Manutenção
+                          </button>
+                        </div>
+                      )}
                     </div>
                   );
                 })
@@ -512,6 +535,16 @@ const TenantReportsPage: React.FC = () => {
           </div>
         )}
       </div>
+      {/* Modal de criação de ticket */}
+      {selectedPropertyId !== null && user && (
+        <CreateTicketModal
+          isOpen={ticketModalOpen}
+          onClose={handleCloseTicketModal}
+          propertyId={selectedPropertyId}
+          tenantEmail={user.email}
+          onSuccess={fetchTenantContracts}
+        />
+      )}
     </>
   );
 };

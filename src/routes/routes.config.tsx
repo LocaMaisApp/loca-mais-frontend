@@ -12,6 +12,7 @@ import Property from "../pages/Property/Property";
 import Reports from "../pages/Reports/Reports";
 import Search from "../pages/Search/Search";
 import TenantReports from "../pages/TenantReports/TenantReports";
+import TicketManagement from "../pages/TicketManagement/TicketManagement";
 
 export const routes: RouteObject[] = [
   {
@@ -88,6 +89,14 @@ export const routes: RouteObject[] = [
       <TenantRoute>
         <TenantReports />
       </TenantRoute>
+    ),
+  },
+  {
+    path: "/proprietario/imovel/:propertyId/tickets",
+    element: (
+      <LandlordRoute>
+        <TicketManagement />
+      </LandlordRoute>
     ),
   },
 ];
