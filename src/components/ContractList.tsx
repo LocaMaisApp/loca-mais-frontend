@@ -2,7 +2,9 @@ import React, { useRef, useState } from "react";
 import { BiCalendar, BiCheckCircle, BiMoney, BiPlus, BiXCircle } from "react-icons/bi";
 import { FaHome, FaMoneyBillWave } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
+import { FaPowerOff } from "react-icons/fa";
 import AddPaymentModal from "./AddPaymentModal";
+import api from "../api/axiosConfig";
 
 export interface Payment {
   id: number;
@@ -58,6 +60,7 @@ const ContractList: React.FC<ContractListProps> = ({
   onUpdate,
 }) => {
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+  const [deactivatingContracts, setDeactivatingContracts] = useState<Set<number>>(new Set());
   const modalRef = useRef<HTMLDialogElement>(null);
   
   const filteredContracts = contracts.filter((contract) => {
@@ -84,6 +87,32 @@ const ContractList: React.FC<ContractListProps> = ({
   const handlePaymentUpdate = () => {
     if (onUpdate) {
       onUpdate();
+    }
+  };
+
+  const handleDeactivateContract = async (contractId: number) => {
+    if (!confirm("Tem certeza que deseja desativar este contrato?")) {
+      return;
+    }
+
+    setDeactivatingContracts(prev => new Set(prev).add(contractId));
+
+    try {
+      await api.delete(`/api/contract/${contractId}`);
+      
+      // Atualiza a lista de contratos
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error("Erro ao desativar contrato:", error);
+      alert("Erro ao desativar contrato. Tente novamente.");
+    } finally {
+      setDeactivatingContracts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(contractId);
+        return newSet;
+      });
     }
   };
 
@@ -161,6 +190,23 @@ const ContractList: React.FC<ContractListProps> = ({
                     </span>
                   </div>
                 </div>
+                
+                {/* Botão de Desativar Contrato */}
+                {contract.active && (
+                  <button
+                    onClick={() => handleDeactivateContract(contract.id)}
+                    disabled={deactivatingContracts.has(contract.id)}
+                    className="btn btn-sm btn-outline btn-error flex items-center gap-1"
+                    title="Desativar contrato"
+                  >
+                    {deactivatingContracts.has(contract.id) ? (
+                      <div className="loading loading-spinner loading-xs"></div>
+                    ) : (
+                      <FaPowerOff className="w-3 h-3" />
+                    )}
+                    {deactivatingContracts.has(contract.id) ? "Desativando..." : "Desativar"}
+                  </button>
+                )}
               </div>
             </div>
 
